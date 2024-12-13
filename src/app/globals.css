@@ -2,6 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'MyCustomFont';
+  src: url('./assets/fonts/valorant/Valorant\ Font.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DIN Next LT Pro Bold';
+  src: url('//db.onlinewebfonts.com/t/3a88649e176a40a6d80b395ca0ae430d.eot');
+  src: url('//db.onlinewebfonts.com/t/3a88649e176a40a6d80b395ca0ae430d.eot?#iefix') format('embedded-opentype'), url('//db.onlinewebfonts.com/t/3a88649e176a40a6d80b395ca0ae430d.woff2') format('woff2'), url('//db.onlinewebfonts.com/t/3a88649e176a40a6d80b395ca0ae430d.woff') format('woff'), url('//db.onlinewebfonts.com/t/3a88649e176a40a6d80b395ca0ae430d.ttf') format('truetype'), url('//db.onlinewebfonts.com/t/3a88649e176a40a6d80b395ca0ae430d.svg#DIN Next LT Pro Bold') format('svg');
+}
+
+:root {
+  --v-red: #ff4655;
+  --v-white: #ece8e1;
+  --v-black: #0f1923;
+  --v-outline: rgba(236, 232, 225, .5);
+}
+
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'MyCustomFont', sans-serif;
+  color: #1f2023
 }

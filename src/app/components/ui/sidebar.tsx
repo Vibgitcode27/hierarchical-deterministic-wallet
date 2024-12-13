@@ -88,7 +88,7 @@ export const DesktopSidebar = ({
   return (
     <>
       <motion.div
-        style={{ backgroundColor: "#060608" }}
+        style={{ backgroundColor: "#111823" }}
         className={cn(
           "h-full px-4 py-4 hidden  md:flex md:flex-col bg-gray-100 dark:bg-gray-800 w-[300px] flex-shrink-0",
           className

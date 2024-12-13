@@ -2,6 +2,7 @@
 import React, { useState, ReactNode, useEffect } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "../components/ui/sidebar";
 import logo from "../assets/profile-removebg-preview.png"
+import avatar from "../assets/https___hypebeast.com_image_2021_10_bored-ape-yacht-club-nft-3-4-million-record-sothebys-metaverse-1.avif"
 import {
   IconArrowLeft,
   IconBrandTabler,
@@ -13,7 +14,6 @@ import { motion } from "framer-motion";
 // import logo from "../../assets/logo1.png"
 import { cn } from "@/lib/utils";
 import { Avatar , Image } from "antd";
-import { log } from "console";
 
 type LayoutProps = {
   children: ReactNode;
@@ -62,7 +62,7 @@ export default function MenuPagesLayout({ children }: LayoutProps) {
       "flex flex-col md:flex-row h-screen w-full overflow-hidden bg-gray-100 dark:bg-neutral-800",
       "border border-neutral-200 dark:border-neutral-700"
     )}
-    style={{ backgroundColor : "black"}}
+    style={{ backgroundColor : "#0f161f"}}
     >
       <Sidebar open={open} setOpen={setOpen}>
         <SidebarBody className="justify-between gap-10">
@@ -80,7 +80,7 @@ export default function MenuPagesLayout({ children }: LayoutProps) {
                 label: "Vibhor Phalke",
                 href: "#",
                 icon: (
-                    <Avatar src="{avatar.src}"/>
+                    <Avatar src={avatar.src}/>
                 ),
               }}
             />
@@ -104,7 +104,8 @@ const Logo = () => {
       <motion.span
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="font-medium text-black dark:text-white whitespace-pre"
+        className="font-large text-black dark:text-white whitespace-pre"
+        style={{ fontSize : "26px" , marginTop : "12px"}}
       >
         Orion
       </motion.span>
@@ -127,7 +128,7 @@ const Dashboard = ({ children }: { children: ReactNode }) => {
   return (
     <div className="flex-1 overflow-auto">
       <div className="p-2 md:p-6 rounded-tl-2xl bg-white dark:bg-neutral-900 h-auto"
-        style={{ backgroundColor : "black"}}
+        style={{ backgroundColor : "#0f161f"}}
       >
         {children}
       </div>
