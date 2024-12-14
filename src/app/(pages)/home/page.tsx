@@ -243,17 +243,17 @@ export default function Home() {
                 align="center"
                 justify="center"
                 style={{
-                  backgroundColor: "rgba(28, 73, 255, 0.1)", // Slightly transparent background
+                  backgroundColor: "rgba(28, 73, 255, 0.1)",
                   borderRadius: "15px",
                   padding: "20px",
-                  width: "calc(90% - 20px)", // Make the card wider
+                  width: "calc(90% - 20px)",
                   marginLeft : "calc(5% - 20px)",
-                  height: "330px", // Maintain height
+                  height: "330px",
                   color: "white",
                   textAlign: "center",
                   transition: "transform 0.3s ease",
                   boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
-                  position: "relative", // Ensure proper positioning of absolute elements
+                  position: "relative",
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'scale(1.02)';
@@ -265,7 +265,7 @@ export default function Home() {
               <Flex 
                 style={{ 
                   position: "absolute",
-                  top: "-45px",
+                  top: "-15px",
                   left: "50%",
                   transform: "translateX(-50%)",
                   width: "100%", 
@@ -299,7 +299,7 @@ export default function Home() {
               >
                   <div className="label">
                       <span className="hover-effect"></span>
-                      <span className="label-text" style={{ padding : "4px" , paddingLeft : "0px" , fontSize : "26px" , color : "#f4f4f4"}}>Orion NFT's</span>
+                      <span onClick={() => {navigate.push("/nft")}} className="label-text" style={{ padding : "4px" , paddingLeft : "0px" , fontSize : "26px" , color : "#f4f4f4"}}>Orion NFT's</span>
                   </div>
               </button>
                 <h2 style={{ 
