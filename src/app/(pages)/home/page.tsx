@@ -1,21 +1,47 @@
 "use client"
 
 import { Flex , Image , Button , Avatar } from "antd";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { WalletOutlined } from '@ant-design/icons';
 import guy1 from "../../assets/image-removebg-preview (2).png"
 import guy2 from "../../assets/image-removebg-preview (1) (1).png"
-import nft1 from "../../assets/nft1.avif"
 import nft2 from "../../assets/nft2.jpg"
 import nft3 from "../../assets/nft3.jpg"
 import nft5 from "../../assets/nft5.png"
-import card2 from "../../assets/home-back.png"
+import coin1 from "../../assets/coin1.jpg"
+import coin2 from "../../assets/coin2.jpg"
+import coin3 from "../../assets/coin3.png"
 import "../../styles/button.css"
 import "../../styles/home.css"
 
 export default function Home() {
 
   const navigate = useRouter();
+
+    const [hoveredImage, setHoveredImage] = useState<number | null>(null);
+    const [hoveredImage1, setHoveredImage1] = useState<number | null>(null);
+
+    const imageStyle = (index : number, isHovered : boolean): React.CSSProperties => ({
+      width: "250px", 
+      height: "200px", 
+      objectFit: "cover",
+      borderRadius: "15px",
+      transform: isHovered 
+        ? "scale(1.05) rotate(0deg) translateY(-10px)" 
+        : index === 0 
+          ? "rotate(-10deg) translateX(10px) translateY(10px)"
+          : index === 1
+            ? "rotate(0deg)"
+            : "rotate(10deg) translateX(-10px) translateY(10px)",
+      boxShadow: isHovered 
+        ? "0 25px 35px rgba(0,0,0,0.4)" 
+        : "0 15px 25px rgba(0,0,0,0.3)",
+      transition: "all 0.3s ease",
+      cursor: "pointer",
+      opacity: isHovered ? 1 : 0.9,
+      filter: isHovered ? "brightness(110%)" : "brightness(100%)"
+    });
 
   const accountData = [
     {
@@ -46,24 +72,6 @@ export default function Home() {
       accountName: 'XTZ Wallet',
       accountHash: '0xABCD...EFGH',
  
-    }
-  ];
-
-    const cardData = [
-    {
-      title: "Secure Wallet",
-      description: "Military-grade encryption and multi-signature protection for your digital assets.",
-      icon: "🔒"
-    },
-    {
-      title: "Instant Swap",
-      description: "Lightning-fast crypto exchanges with minimal fees and maximum efficiency.",
-      icon: "⚡"
-    },
-    {
-      title: "Portfolio Tracking",
-      description: "Real-time analytics and comprehensive insights into your crypto investments.",
-      icon: "📊"
     }
   ];
 
@@ -112,7 +120,6 @@ export default function Home() {
               <Flex style={{ width : "100%" , marginTop : "20px"}} align="center" justify="center" vertical>
                 <h1 style={{ margin: 0, fontSize: "23px" , lineHeight : "35px" }}>Empower Your Digital </h1>
                 <h1 style={{ margin: 0, fontSize: "23px" }}>Assets With </h1>
-                {/* <h1 style={{ color : "black" , fontSize : "70px"}}>Orion</h1> */}
                 <button style={{ width : "auto"}} type="button">
                       <span style={{ backgroundColor : "white" }}>
                         <span style={{ padding : "10px" , fontSize : "80px" , color : "black"}} className="thin-border-text">Orion</span>
@@ -258,58 +265,26 @@ export default function Home() {
               <Flex 
                 style={{ 
                   position: "absolute",
-                  // bottom: "20px", // Position at bottom to leave space for text
-                  top : "-15px",
+                  top: "-45px",
                   left: "50%",
                   transform: "translateX(-50%)",
                   width: "100%", 
                   justifyContent: "center", 
                   alignItems: "center",
-                  zIndex: 1
+                  zIndex: 1,
+                  gap: "20px"
                 }}
               >
-                <Image 
-                  preview={false} 
-                  src={nft5.src} 
-                  style={{ 
-                    width: "250px", 
-                    height: "200px", 
-                    objectFit: "cover",
-                    borderRadius: "15px",
-                    transform: "rotate(-10deg) translateX(-10px) translateY(10px)",
-                    boxShadow: "0 15px 25px rgba(0,0,0,0.3)",
-                    transition: "all 0.3s ease",
-                    cursor: "pointer",
-                  }}
-                />
-                <Image 
-                  preview={false} 
-                  src={nft2.src} 
-                  style={{ 
-                    width: "250px", 
-                    height: "200px", 
-                    objectFit: "cover",
-                    borderRadius: "15px",
-                    transform: "rotate(0deg)",
-                    boxShadow: "0 15px 25px rgba(0,0,0,0.3)",
-                    transition: "all 0.3s ease",
-                    cursor: "pointer",
-                  }}
-                />
-                <Image 
-                  preview={false} 
-                  src={nft3.src} 
-                  style={{
-                    width: "250px", 
-                    height: "200px", 
-                    objectFit: "cover",
-                    borderRadius: "15px",
-                    transform: "rotate(10deg) translateX(10px) translateY(10px)",
-                    boxShadow: "0 15px 25px rgba(0,0,0,0.3)",
-                    transition: "all 0.3s ease",
-                    cursor: "pointer",
-                  }}
-                />
+                {[nft5, nft2, nft3].map((coin, index) => (
+                  <Image 
+                    key={index}
+                    preview={false} 
+                    src={coin.src} 
+                    onMouseEnter={() => setHoveredImage1(index)}
+                    onMouseLeave={() => setHoveredImage1(null)}
+                    style={imageStyle(index, hoveredImage1 === index)}
+                  />
+                ))}
               </Flex>
               <button className="outline red" type="button"
                 style={{ 
@@ -422,98 +397,92 @@ export default function Home() {
               {/* Card 3 */}
 
               <Flex 
-                vertical
-                align="center"
-                justify="center"
-                style={{
-                  backgroundColor: "rgba(28, 73, 255, 0.1)", // Slightly transparent background
-                  borderRadius: "15px",
-                  // padding: "20px",
-                  width: "calc(90% - 20px)", // Make the card wider
-                  marginLeft : "calc(5% - 20px)",
-                  height: "330px", // Maintain height
-                  color: "white",
-                  textAlign: "center",
-                  transition: "transform 0.3s ease",
-                  boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
-                  position: "relative", // Ensure proper positioning of absolute elements
-                  overflow: "hidden" // Contain the absolutely positioned images
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'scale(1.02)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'scale(1)';
-                }}
-              >
-              <Flex
-                style={{ 
-                  position: "absolute",
-                  bottom: "20px", // Position at bottom to leave space for text
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  width: "100%", 
-                  justifyContent: "center", 
-                  alignItems: "center",
-                  zIndex: 1
-                }}
-              >
-                <Image 
-                  preview={false} 
-                  src={nft5.src} 
-                  style={{ 
-                    width: "250px", 
-                    height: "250px", 
-                    objectFit: "cover",
-                    borderRadius: "15px",
-                    transform: "rotate(-10deg) translateX(-30px)",
-                    boxShadow: "0 15px 25px rgba(0,0,0,0.3)",
-                    transition: "all 0.3s ease",
-                    cursor: "pointer",
-                  }}
-                />
-                <Image 
-                  preview={false} 
-                  src={nft2.src} 
-                  style={{ 
-                    width: "250px", 
-                    height: "250px", 
-                    objectFit: "cover",
-                    borderRadius: "15px",
-                    transform: "rotate(0deg)",
-                    boxShadow: "0 15px 25px rgba(0,0,0,0.3)",
-                    transition: "all 0.3s ease",
-                    cursor: "pointer",
-                  }}
-                />
-                <Image 
-                  preview={false} 
-                  src={nft3.src} 
+                  vertical
+                  align="center"
+                  justify="center"
                   style={{
-                    width: "250px", 
-                    height: "250px", 
-                    objectFit: "cover",
+                    backgroundColor: "rgba(28, 73, 255, 0.1)",
                     borderRadius: "15px",
-                    transform: "rotate(10deg) translateX(30px)",
-                    boxShadow: "0 15px 25px rgba(0,0,0,0.3)",
-                    transition: "all 0.3s ease",
-                    cursor: "pointer",
+                    padding: "20px",
+                    width: "calc(90% - 20px)",
+                    marginLeft: "calc(5% - 20px)",
+                    height: "330px",
+                    color: "white",
+                    textAlign: "center",
+                    transition: "transform 0.3s ease",
+                    boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
+                    position: "relative",
                   }}
-                />
+                >
+                  <Flex 
+                    style={{ 
+                      position: "absolute",
+                      top: "-45px",
+                      left: "50%",
+                      transform: "translateX(-50%)",
+                      width: "100%", 
+                      justifyContent: "center", 
+                      alignItems: "center",
+                      zIndex: 1,
+                      gap: "20px"
+                    }}
+                  >
+                    {[coin1, coin2, coin3].map((coin, index) => (
+                      <Image 
+                        key={index}
+                        preview={false} 
+                        src={coin.src} 
+                        onMouseEnter={() => setHoveredImage(index)}
+                        onMouseLeave={() => setHoveredImage(null)}
+                        style={imageStyle(index, hoveredImage === index)}
+                      />
+                    ))}
+                  </Flex>
+                  
+                  {/* Rest of the existing component remains the same */}
+                  <button 
+                    className="outline red" 
+                    type="button"
+                    style={{ 
+                      color: "blue",
+                      position: "absolute",
+                      bottom: "-45px",
+                      left: "30%",
+                      textAlign: "center",
+                      padding: "10px",
+                      width: "220px",
+                    }}
+                  >
+                    <div className="label">
+                      <span className="hover-effect"></span>
+                      <span 
+                        className="label-text" 
+                        style={{ 
+                          padding: "4px", 
+                          paddingLeft: "0px", 
+                          fontSize: "26px", 
+                          color: "#f4f4f4"
+                        }}
+                      >
+                        Start Minting
+                      </span>
+                    </div>
+                  </button>
+                  
+                  <h2 
+                    style={{ 
+                      fontSize: "16px", 
+                      marginBottom: "15px",
+                      position: "absolute",
+                      bottom: "80px",
+                      left: "20px",
+                      color: "white",
+                    }}
+                  >
+                    Create and launch your own token effortlessly with Orion.
+                  </h2>
+                </Flex>
               </Flex>
-                <h2 style={{ 
-                  fontSize: "24px", 
-                  marginBottom: "15px",
-                  color: "#1c49ff",
-                  position: "absolute",
-                  top: "20px",
-                  left: "20px"
-                }}>
-                  Orion NFT Showcase
-                </h2>
-
-              </Flex>
-          </Flex>
       </Flex>
     </div>
  )   
