@@ -9,6 +9,7 @@ import nft1 from "../../assets/nft1.avif"
 import nft2 from "../../assets/nft2.jpg"
 import nft3 from "../../assets/nft3.jpg"
 import nft5 from "../../assets/nft5.png"
+import card2 from "../../assets/home-back.png"
 import "../../styles/button.css"
 import "../../styles/home.css"
 
@@ -316,14 +317,14 @@ export default function Home() {
                 position: "absolute",
                 bottom: "-15px",
                 left: "25%",
-                textAlign: "left",
+                textAlign: "center",
                 padding : "10px",
                 width : "220px",
               }}
               >
                   <div className="label">
                       <span className="hover-effect"></span>
-                      <span className="label-text" style={{ padding : "4px" , paddingLeft : "30px" , fontSize : "26px"}}>Orion NFT's</span>
+                      <span className="label-text" style={{ padding : "4px" , paddingLeft : "0px" , fontSize : "26px" , color : "#f4f4f4"}}>Orion NFT's</span>
                   </div>
               </button>
                 <h2 style={{ 
@@ -341,20 +342,19 @@ export default function Home() {
               <Flex 
                 vertical
                 align="center"
-                justify="center"
                 style={{
-                  backgroundColor: "rgba(28, 73, 255, 0.1)", // Slightly transparent background
+                  backgroundColor: "rgba(28, 73, 255, 0.1)",
                   borderRadius: "15px",
                   padding: "20px",
-                  width: "calc(90% - 20px)", // Make the card wider
-                  marginLeft : "calc(5% - 20px)",
-                  height: "330px", // Maintain height
+                  width: "calc(90% - 20px)",
+                  marginLeft: "calc(5% - 20px)",
+                  height: "330px",
                   color: "white",
                   textAlign: "center",
                   transition: "transform 0.3s ease",
                   boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
-                  position: "relative", // Ensure proper positioning of absolute elements
-                  overflow: "hidden" // Contain the absolutely positioned images
+                  position: "relative",
+                  overflow: "hidden"
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'scale(1.02)';
@@ -363,84 +363,60 @@ export default function Home() {
                   e.currentTarget.style.transform = 'scale(1)';
                 }}
               >
-              <Flex 
-                gap={30} 
-                style={{ 
-                  position: "absolute",
-                  bottom: "20px", // Position at bottom to leave space for text
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  width: "100%", 
-                  justifyContent: "center", 
-                  alignItems: "center",
-                  zIndex: 1
-                }}
-              >
-                <Image 
-                  preview={false} 
-                  src={nft5.src} 
-                  style={{ 
-                    width: "250px", 
-                    height: "250px", 
-                    objectFit: "cover",
-                    borderRadius: "15px",
-                    transform: "rotate(-10deg) translateX(-30px)",
-                    boxShadow: "0 15px 25px rgba(0,0,0,0.3)",
-                    transition: "all 0.3s ease",
-                    cursor: "pointer",
-                  }}
-                />
-                <Image 
-                  preview={false} 
-                  src={nft2.src} 
-                  style={{ 
-                    width: "250px", 
-                    height: "250px", 
-                    objectFit: "cover",
-                    borderRadius: "15px",
-                    transform: "rotate(0deg)",
-                    boxShadow: "0 15px 25px rgba(0,0,0,0.3)",
-                    transition: "all 0.3s ease",
-                    cursor: "pointer",
-                  }}
-                />
-                <Image 
-                  preview={false} 
-                  src={nft3.src} 
-                  style={{
-                    width: "250px", 
-                    height: "250px", 
-                    objectFit: "cover",
-                    borderRadius: "15px",
-                    transform: "rotate(10deg) translateX(30px)",
-                    boxShadow: "0 15px 25px rgba(0,0,0,0.3)",
-                    transition: "all 0.3s ease",
-                    cursor: "pointer",
-                  }}
-                />
-              </Flex>
                 <h2 style={{ 
-                  fontSize: "24px", 
+                  fontSize: "30px", 
                   marginBottom: "15px",
-                  color: "#1c49ff",
-                  position: "absolute",
                   top: "20px",
-                  left: "20px"
+                  left: "20px",
+                  color : "white",
+                  textDecoration : "uppercase"
                 }}>
-                  Orion NFT Showcase
+                  MANAGE YOUR WALLET
                 </h2>
                 <p style={{ 
-                  fontSize: "16px", 
-                  color: "#888",
+                  fontSize: "16px",
                   lineHeight: "1.5",
-                  position: "absolute",
-                  top: "70px",
-                  left: "20px",
-                  right: "20px",
-                  textAlign: "left"
-                }}>
-                  Explore our curated collection of digital assets. Immerse yourself in a world of unique, stunning NFTs that represent the cutting edge of digital art and blockchain technology.
+                  textAlign: "center",
+                  color : "#ff4654",
+                  fontWeight : "600",
+                  }}>
+                  Import your existing wallet seamlessly, or create a new, secure wallet in just a few clicks. 
+                  Recover access effortlessly with your seed phrase and manage all your accounts in one place.
                 </p>
+                <Flex>
+                    <button className="outline red" type="button"
+                      style={{ 
+                      color: "blue",
+                      position: "absolute",
+                      bottom: "-15px",
+                      left: "5%",
+                      textAlign: "center",
+                      padding : "10px",
+                      width : "220px",
+                    }}
+                    >
+                        <div className="label">
+                            <span className="hover-effect"></span>
+                            <span className="label-text" style={{ padding : "4px" , paddingLeft : "0px" , fontSize : "26px" , color : "#f4f4f4"}}>Generate Seed</span>
+                        </div>
+                    </button>
+                    <button className="outline" type="button"
+                      style={{ 
+                      color: "#ff4654",
+                      position: "absolute",
+                      bottom: "-15px",
+                      left: "53%",
+                      textAlign: "center",
+                      padding : "10px",
+                      width : "220px",
+                    }}
+                    >
+                        <div className="label">
+                            <span className="hover-effect" style={{ backgroundColor : "blue"}}></span>
+                            <span className="label-text" style={{ padding : "4px" , paddingLeft : "0px" , fontSize : "26px" , color : "#f4f4f4" }}>Import Seed</span>
+                        </div>
+                    </button>
+                </Flex>
               </Flex>
 
               {/* Card 3 */}
