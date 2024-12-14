@@ -7,8 +7,9 @@ import {
   IconArrowLeft,
   IconBrandTabler,
   IconPencilPlus,
-  IconInputSearch,
+  IconWallet,
 } from "@tabler/icons-react";
+import { ShopOutlined } from '@ant-design/icons';
 import Link from "next/link";
 import { motion } from "framer-motion";
 // import logo from "../../assets/logo1.png"
@@ -35,17 +36,17 @@ export default function MenuPagesLayout({ children }: LayoutProps) {
       ),
     },
     {
-      label: "Orion NFT's",
-      href: "/nft",
+      label: "My Wallet",
+      href: "/wallet",
       icon: (
-        <IconInputSearch className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+        <IconWallet className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
     },
     {
-      label: "Created",
-      href: "/created",
+      label: "Orion NFT's",
+      href: "/nft",
       icon: (
-        <IconPencilPlus className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+        <ShopOutlined className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
     },
     {

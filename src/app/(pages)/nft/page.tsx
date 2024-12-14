@@ -175,7 +175,7 @@ export default function NFTShowcase() {
                   
                   <button
                     style={{
-                    //   all: "unset",
+                      all: "unset",
                       backgroundColor: "#1c49ff",
                       color: "white",
                       border: "none",
