@@ -215,7 +215,7 @@ export default function Home() {
                     style={{
                       borderRadius: "30px", 
                       border: "none",
-                      backgroundColor: "#1c49ff",
+                      backgroundColor: "#74ccc9",
                       color: "black",
                       paddingInline: "10px",
                       paddingBlock: "3px",
@@ -288,7 +288,7 @@ export default function Home() {
               </Flex>
               <button className="outline red" type="button"
                 style={{ 
-                color: "blue",
+                color: "#74ccc9",
                 position: "absolute",
                 bottom: "-25px",
                 left: "25%",
@@ -349,7 +349,7 @@ export default function Home() {
                 <Flex>
                     <button className="outline red" type="button"
                       style={{ 
-                      color: "blue",
+                      color: "#74ccc9",
                       position: "absolute",
                       bottom: "-25px",
                       left: "5%",
@@ -375,7 +375,7 @@ export default function Home() {
                     }}
                     >
                         <div className="label">
-                            <span className="hover-effect" style={{ backgroundColor : "blue"}}></span>
+                            <span className="hover-effect" style={{ backgroundColor : "#74ccc9"}}></span>
                             <span className="label-text" style={{ padding : "1px" , paddingLeft : "0px" , fontSize : "20px" , color : "#f4f4f4" }}>Import Seed</span>
                         </div>
                     </button>
@@ -432,7 +432,7 @@ export default function Home() {
                     className="outline red" 
                     type="button"
                     style={{ 
-                      color: "blue",
+                      color: "#74ccc9",
                       position: "absolute",
                       bottom: "-45px",
                       left: "30%",

@@ -307,8 +307,10 @@
 
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState , useRef } from 'react';
 import { Flex, Image, Avatar } from 'antd';
+import ethLogo from "../../assets/ethereum-6903901_1280.png";
+import solLogo from "../../assets/solana-sol-icon.png";
 import { 
   WalletOutlined, 
   CopyOutlined, 
@@ -316,21 +318,22 @@ import {
   SwapOutlined, 
   QrcodeOutlined 
 } from '@ant-design/icons';
+import "../../styles/button.css";
 
 export default function WalletPage() {
-  const [activeMenu, setActiveMenu] = useState<'generate' | 'import' | 'wallet'>('generate');
+  const [activeMenu, setActiveMenu] = useState<'home' | 'import' | 'wallet' | 'generate' | 'import'>('home');
   const [selectedBlockchain, setSelectedBlockchain] = useState('ethereum');
   const [selectedAccount, setSelectedAccount] = useState(0);
 
   const blockchains = [
     { 
       name: 'Ethereum', 
-      icon: '/ethereum-icon.png',
+      icon: ethLogo,
       networks: ['Mainnet', 'Sepolia']
     },
     { 
       name: 'Solana', 
-      icon: '/solana-icon.png',
+      icon: solLogo,
       networks: ['Mainnet', 'Testnet']
     }
   ];
@@ -354,23 +357,6 @@ export default function WalletPage() {
     }
   ];
 
-  const imageStyle = (isHovered: boolean): React.CSSProperties => ({
-    width: "250px", 
-    height: "200px", 
-    objectFit: "cover",
-    borderRadius: "15px",
-    transform: isHovered 
-      ? "scale(1.05) rotate(0deg) translateY(-10px)" 
-      : "scale(1) rotate(0deg) translateY(0px)",
-    boxShadow: isHovered 
-      ? "0 25px 35px rgba(0,0,0,0.4)" 
-      : "0 15px 25px rgba(0,0,0,0.3)",
-    transition: "all 0.3s ease",
-    cursor: "pointer",
-    opacity: isHovered ? 1 : 0.9,
-    filter: isHovered ? "brightness(110%)" : "brightness(100%)"
-  });
-
   const renderGenerateWallet = () => (
     <Flex 
       vertical 
@@ -379,7 +365,7 @@ export default function WalletPage() {
       style={{ 
         height: '100%', 
         gap: '20px',
-        backgroundColor: 'rgba(28, 73, 255, 0.1)',
+        // backgroundColor: 'rgba(28, 73, 255, 0.1)',
         borderRadius: '15px',
         padding: '40px'
       }}
@@ -392,7 +378,7 @@ export default function WalletPage() {
         Create Your Wallet
       </h1>
 
-      <Flex gap={20} style={{ width: '100%', justifyContent: 'center' }}>
+      {/* <Flex gap={20} style={{ width: '100%', justifyContent: 'center' }}>
         {blockchains.map((blockchain) => (
           <Flex
             key={blockchain.name}
@@ -416,7 +402,7 @@ export default function WalletPage() {
           >
             <Image 
               preview={false}
-              src={blockchain.icon} 
+              src={blockchain.icon.src} 
               style={{
                 width: "100px",
                 height: "100px",
@@ -435,6 +421,7 @@ export default function WalletPage() {
                 <button
                   key={network}
                   style={{
+                    all: "unset",
                     backgroundColor: "#1c49ff",
                     color: "white",
                     border: "none",
@@ -449,38 +436,375 @@ export default function WalletPage() {
             </Flex>
           </Flex>
         ))}
-      </Flex>
+      </Flex> */}
 
-      <Flex gap={20} style={{ marginTop: '30px' }}>
-        <button
-          style={{
-            backgroundColor: "#1c49ff",
-            color: "white",
-            border: "none",
-            borderRadius: "10px",
-            padding: "12px 24px",
-            fontSize: "18px",
-            cursor: "pointer"
-          }}
+      <Flex gap={50} style={{ marginTop: '30px' }}>
+        <button 
+          onClick={() => {setActiveMenu('generate')}}
+          className="outline red" type="button"
+          style={{ 
+          color: "#74ccc9",
+          textAlign: "center",
+          padding : "10px",
+          width : "300px",
+        }}
         >
-          Generate New Wallet
+          <div className="label">
+              <span className="hover-effect"></span>
+              <span className="label-text" style={{ padding : "4px" , paddingBlock : "10px" , paddingLeft : "6px" , fontSize : "26px" , color : "#f4f4f4"}}>Generate Seed</span>
+          </div>
         </button>
-        <button
-          style={{
-            backgroundColor: "#ff4654",
-            color: "white",
-            border: "none",
-            borderRadius: "10px",
-            padding: "12px 24px",
-            fontSize: "18px",
-            cursor: "pointer"
-          }}
+        <button 
+          onClick={() => {setActiveMenu('import')}}
+          className="outline" 
+          type="button"
+          style={{ 
+          color: "#ff4654",
+          textAlign: "center",
+          padding : "10px",
+          width : "300px",
+        }}
         >
-          Import Wallet
+            <div className="label">
+                <span className="hover-effect" style={{ backgroundColor : "#74ccc9"}}></span>
+                <span className="label-text" style={{ padding : "4px" , paddingBlock : "10px" , paddingLeft : "6px" , fontSize : "26px" , color : "#f4f4f4" }}>Import Seed</span>
+             </div>
         </button>
       </Flex>
     </Flex>
   );
+
+
+  const [seedPhrase, setSeedPhrase] = useState<string>('venture lottery motor spell gloom venue cruel escape jump banner shell debris');
+  const [isCopied, setIsCopied] = useState<boolean>(false);
+  const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
+  const [hasAgreedToCopy, setHasAgreedToCopy] = useState<boolean>(false);
+
+  const copySeedPhrase = () => {
+    navigator.clipboard.writeText(seedPhrase);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
+  };
+
+  const handleProceed = () => {
+    if (hasAgreedToCopy && isCopied) {
+      setIsConfirmed(true);
+    } else {
+      alert('Please copy the seed phrase and confirm that you have copied it.');
+    }
+  };
+
+  const renderGenerateSeedPhrase = () => {
+    return (
+    <div 
+      style={{ 
+        backgroundColor: 'rgba(28, 73, 255, 0.1)', 
+        borderRadius: '15px', 
+        padding: '10px', 
+        color: 'white',
+        width:'900px',
+        margin: '0 auto'
+      }}
+    >
+      <h2 
+        style={{ 
+          textAlign: 'center', 
+          marginBottom: '20px', 
+          color: '#74ccc9' 
+        }}
+      >
+        Generate Seed Phrase
+      </h2>
+
+      {!isConfirmed ? (
+        <>
+          {seedPhrase ? (
+            <div 
+              style={{ 
+                backgroundColor: 'rgba(0,0,0,0.3)', 
+                borderRadius: '10px', 
+                padding: '15px', 
+                marginBottom: '20px',
+                position: 'relative'
+              }}
+            >
+              <div 
+                style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: 'repeat(4, 1fr)', 
+                  gap: '10px' 
+                }}
+              >
+                {seedPhrase.split(' ').map((word, index) => (
+                  <div 
+                    key={index} 
+                    style={{ 
+                      backgroundColor: 'rgba(255,255,255,0.1)', 
+                      padding: '10px', 
+                      borderRadius: '5px', 
+                      textAlign: 'center' 
+                    }}
+                  >
+                    {word}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          <div style={{ textAlign: 'center', marginBottom: '-20px' }}>
+            {!seedPhrase ? (
+              <button 
+                // onClick={generateSeedPhrase}
+                style={{
+                  backgroundColor: '#74ccc9',
+                  color: 'black',
+                  border: 'none',
+                  padding: '10px 20px',
+                  borderRadius: '5px',
+                  cursor: 'pointer'
+                }}
+              >
+                Generate Seed Phrase
+              </button>
+            ) : (
+              <>
+                <button 
+                  onClick={copySeedPhrase}
+                  style={{
+                    backgroundColor: isCopied ? '#74ccc9' : 'transparent',
+                        border: '1px solid #74ccc9',
+                    color: 'white',
+                    padding: '5px 10px',
+                    borderRadius: '5px',
+                    cursor: 'pointer'
+                   }}
+                >
+                  {isCopied ? 'Copied!' : 'Copy'}
+                </button>
+                <div 
+                  style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    marginTop : "-30px"
+                  }}
+                >
+                  <input 
+                    type="checkbox" 
+                    id="copyConfirm"
+                    checked={hasAgreedToCopy}
+                    onChange={() => setHasAgreedToCopy(!hasAgreedToCopy)}
+                    style={{ 
+                      marginRight: '10px', 
+                      accentColor: '#74ccc9' 
+                    }}
+                  />
+                  <label 
+                    htmlFor="copyConfirm" 
+                    style={{ 
+                      color: isCopied ? '#74ccc9' : '#ff4654' 
+                    }}
+                  >
+                    I have copied and securely stored my seed phrase
+                  </label>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '20px' }}>
+                  <button 
+                    // onClick={generateSeedPhrase}
+                    style={{
+                      backgroundColor: '#ff4654',
+                      color: 'white',
+                      border: 'none',
+                      padding: '10px 20px',
+                      borderRadius: '5px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Regenerate
+                  </button>
+                  <button 
+                    onClick={handleProceed}
+                    style={{
+                      backgroundColor: (hasAgreedToCopy && isCopied) ? '#74ccc9' : 'gray',
+                      color: 'white',
+                      border: 'none',
+                      padding: '10px 20px',
+                      borderRadius: '5px',
+                      cursor: (hasAgreedToCopy && isCopied) ? 'pointer' : 'not-allowed'
+                    }}
+                    disabled={!(hasAgreedToCopy && isCopied)}
+                  >
+                    Proceed
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </>
+      ) : (
+        <div 
+          style={{ 
+            textAlign: 'center', 
+            backgroundColor: 'rgba(0,0,0,0.3)', 
+            padding: '20px', 
+            borderRadius: '10px' 
+          }}
+        >
+          <h3 style={{ color: '#74ccc9', marginBottom: '10px' }}>
+            Seed Phrase Confirmed!
+          </h3>
+          <p>Your seed phrase has been successfully generated and verified.</p>
+          <button 
+            onClick={() => {/* Navigate to next step or perform next action */}}
+            style={{
+              backgroundColor: '#74ccc9',
+              color: 'black',
+              border: 'none',
+              padding: '10px 20px',
+              borderRadius: '5px',
+              marginTop: '15px',
+              cursor: 'pointer'
+            }}
+          >
+            Next Step
+          </button>
+        </div>
+      )}
+    </div>
+    )
+  }
+
+    const [seedWords, setSeedWords] = useState<string[]>(Array(12).fill(''));
+    const [isValidSeed, setIsValidSeed] = useState<boolean>(true);
+    const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+    // Handle paste event
+    const handlePaste = (event: React.ClipboardEvent<HTMLInputElement>) => {
+      const pastedText = event.clipboardData.getData('text');
+      const words = pastedText.trim().toLowerCase().split(/\s+/);
+      
+      if (words.length === 12) {
+        setSeedWords(words);
+        
+        // Automatically fill inputs
+        words.forEach((word, index) => {
+          if (inputRefs.current[index]) {
+            inputRefs.current[index]!.value = word;
+          }
+        });
+      }
+    };
+
+    const handleWordChange = (index: number, value: string) => {
+      const newSeedWords = [...seedWords];
+      newSeedWords[index] = value.trim().toLowerCase();
+      setSeedWords(newSeedWords);
+      // validateSeedPhrase(newSeedWords);
+    };
+
+    // const validateSeedPhrase = (words: string[]) => {
+    //   const allWordsFilled = words.every(word => word.length > 0);
+    //   const isValid = allWordsFilled && bip39.validateMnemonic(words.join(' '));
+      
+    //   setIsValidSeed(isValid);
+    // };
+
+    const handleImportSeedProceed = () => {
+      if (isValidSeed) {
+        console.log('Valid seed phrase. Importing wallet...');
+      } else {
+        alert('Please enter a valid 12-word seed phrase');
+      }
+    };
+
+  const renderImportSeedPhrase = () => {
+    return (
+      <div 
+        style={{ 
+          backgroundColor: ' rgba(28, 73, 255, 0.1)', 
+          borderRadius: '15px', 
+          padding: '20px', 
+          color: 'white',
+          maxWidth: '930px',
+          margin: '0 auto'
+        }}
+      >
+        <h2 
+          style={{ 
+            textAlign: 'center', 
+            marginBottom: '20px', 
+            color: '#74ccc9' 
+          }}
+        >
+          Import Wallet
+        </h2>
+
+        <div 
+          style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(4, 1fr)', 
+            gap: '10px', 
+            marginBottom: '20px' ,
+            backgroundColor : "rgba(0, 0, 0, 0.3)",
+            padding : "20px" ,
+            borderRadius : "20px" 
+          }}
+        >
+          {seedWords.map((word, index) => (
+            <input
+              key={index}
+              ref={el => { inputRefs.current[index] = el; }}
+              type="text"
+              placeholder={`Word ${index + 1}`}
+              value={word}
+              onChange={(e) => handleWordChange(index, e.target.value)}
+              onPaste={index === 0 ? handlePaste : undefined}
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.1)',
+                border: '1px solid black',
+                borderRadius: '5px',
+                padding: '10px',
+                color: 'white',
+                textAlign: 'center',
+                width : "200px"
+              }}
+            />
+          ))}
+        </div>
+
+        <div style={{ textAlign: 'center' }}>
+          <button 
+            onClick={handleImportSeedProceed}
+            disabled={!isValidSeed}
+            style={{
+              backgroundColor: isValidSeed ? '#74ccc9' : 'gray',
+              color: 'white',
+              border: 'none',
+              padding: '10px 10px',
+              borderRadius: '5px',
+              cursor: isValidSeed ? 'pointer' : 'not-allowed'
+            }}
+          >
+            Import Wallet
+          </button>
+        </div>
+
+        {!isValidSeed && seedWords.some(word => word.length > 0) && (
+          <p 
+            style={{ 
+              color: '#ff4654', 
+              textAlign: 'center', 
+              marginTop: '10px' 
+            }}
+          >
+            Invalid seed phrase. Please check your words.
+          </p>
+        )}
+      </div>
+    );
+  };
 
   const renderWalletInterface = () => {
     const currentAccount = accounts[selectedAccount];
@@ -713,7 +1037,9 @@ export default function WalletPage() {
           # Manage Your Digital Assets
         </h1>
 
-        {activeMenu === 'generate' && renderGenerateWallet()}
+        {activeMenu === 'home' && renderGenerateWallet()}
+        {activeMenu === 'generate' && renderGenerateSeedPhrase()}
+        {activeMenu === 'import' && renderImportSeedPhrase()}
         {activeMenu === 'wallet' && renderWalletInterface()}
       </Flex>
     </div>

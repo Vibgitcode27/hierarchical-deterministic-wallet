@@ -20,6 +20,8 @@
   --v-white: #ece8e1;
   --v-black: #0f1923;
   --v-outline: rgba(236, 232, 225, .5);
+  /* rgba(28, 73, 255, 0.1)
+  rgba(0, 0, 0, 0.3) */
 }
 
 body {
@@ -27,4 +29,5 @@ body {
   /* color: #1f2023;
   color: #1c49ff; */
   /* color: #101821; */
+  /* color : #74ccc9, */
 }
