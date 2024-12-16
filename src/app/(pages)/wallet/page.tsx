@@ -698,7 +698,7 @@ export default function WalletPage() {
     };
 
     const handleWordChange = (index: number, value: string) => {
-      const newSeedWords = [...seedWords];
+      const newSeedWords = seedWords;
       newSeedWords[index] = value.trim().toLowerCase();
       setSeedWords(newSeedWords);
       // validateSeedPhrase(newSeedWords);
