@@ -128,7 +128,7 @@ const LogoIcon = () => {
 const Dashboard = ({ children }: { children: ReactNode }) => {
   return (
     <div className="flex-1 overflow-auto">
-      <div className="p-2 md:p-6 rounded-tl-2xl bg-white dark:bg-neutral-900 h-auto"
+      <div className="p-2 md:py-5 rounded-tl-2xl bg-white dark:bg-neutral-900 h-auto"
         style={{ backgroundColor : "#0f161f"}}
       >
         {children}

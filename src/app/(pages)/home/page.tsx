@@ -1,6 +1,6 @@
 "use client"
 
-import { Flex , Image , Button , Avatar } from "antd";
+import { Flex , Image , Avatar } from "antd";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { WalletOutlined } from '@ant-design/icons';
@@ -24,7 +24,7 @@ export default function Home() {
 
     const imageStyle = (index : number, isHovered : boolean): React.CSSProperties => ({
       width: "250px", 
-      height: "200px", 
+      height: "180px", 
       objectFit: "cover",
       borderRadius: "15px",
       transform: isHovered 
@@ -77,11 +77,11 @@ export default function Home() {
 
  return(
     <div style={{ 
-      height: "93vh", 
       borderRadius: "30px", 
-      padding: "20px" 
     }}>
-      <Flex gap={30} style={{ marginTop: "3px" }}>
+      <Flex gap={30} style={{ 
+        marginTop: "3px" ,
+       }}>
         <Flex 
           align="center" 
           justify="space-between" 
@@ -109,8 +109,8 @@ export default function Home() {
               vertical 
               style={{ 
                 backgroundColor: "#0000003e", 
-                height: "400px", 
-                width: "600px",
+                height: "100%", 
+                width: "450px",
                 borderRadius: "15px",
                 padding : "10px",
                 marginLeft : "-70px"
@@ -133,7 +133,7 @@ export default function Home() {
             style={{ 
               position: "absolute",
               right: "-5%",
-              top: "-10%",
+              top: "-7%",
               width: "50%", 
               justifyContent: "center", 
               alignItems: "center",
@@ -144,7 +144,7 @@ export default function Home() {
               preview={false} 
               src={guy1.src} 
               style={{ 
-                width: "220px", 
+                width: "190px", 
                 height: "auto", 
                 transform: "rotate(-5deg)",
                 boxShadow: "0 10px 20px rgba(0,0,0,0.3)"
@@ -154,7 +154,7 @@ export default function Home() {
               preview={false} 
               src={guy2.src} 
               style={{ 
-                width: "200px", 
+                width: "170px", 
                 height: "auto", 
                 transform: "rotate(4deg)",
                 boxShadow: "0 10px 20px rgba(0,0,0,0.3)",
@@ -187,14 +187,14 @@ export default function Home() {
               >
                 <Flex align="center" gap="middle">
                   <Avatar
-                    size={55} 
+                    size={50} 
                     icon={<WalletOutlined />} 
                   />
                   <Flex vertical>
-                    <span style={{ color: 'white', fontWeight: 'bold' , fontSize : "25px" , lineHeight : "45px" }}>
+                    <span style={{ color: 'white', fontWeight: 'bold' , fontSize : "18px" , lineHeight : "20px" }}>
                       {account.accountName}
                     </span>
-                    <small style={{ color: '#888' , fontSize : "19px" }}>
+                    <small style={{ color: '#888' , fontSize : "17px" }}>
                       {account.accountHash}
                     </small>
                   </Flex>
@@ -210,7 +210,7 @@ export default function Home() {
                     Swap
                   </Button>
                 </Flex> */}
-                <Flex vertical align="center" justify="center" style={{ height : "100px"}}>
+                <Flex vertical align="center" justify="center" style={{ height : "70px"}}>
                   <Flex
                     style={{
                       borderRadius: "30px", 
@@ -219,10 +219,10 @@ export default function Home() {
                       color: "black",
                       paddingInline: "10px",
                       paddingBlock: "3px",
-                      fontSize: "18px",
+                      fontSize: "12px",
                       fontFamily: "sans-serif",
                       fontWeight: "600",
-                      height : "30px",
+                      height : "22px",
                       cursor : "pointer"
                     }}>
                       INTERACT
@@ -233,9 +233,9 @@ export default function Home() {
           </Flex>
         </Flex>
       </Flex>
-      <Flex vertical style={{ marginTop : "20px"}}>
-        <h1 style={{ color : "#f4f4f4"}}>E s s e n t i a l s</h1>
-        <h1 style={{ fontSize : "55px" , fontFamily : "sans-serif" , fontWeight :"600" , color : "white"}}># What Orion Brings to You</h1>
+      <Flex vertical style={{ marginTop : "5px"}}>
+        <h1 style={{ color : "#f4f4f4" , fontSize : '16px'}}>E s s e n t i a l s</h1>
+        <h1 style={{ fontSize : "48px" , fontFamily : "sans-serif" , fontWeight :"600" , color : "white" , marginTop : "-10px"}}># What Orion Brings to You</h1>
         
       <Flex gap={20} style={{ width: '100%' , marginTop : "20px"}}>
               <Flex 
@@ -248,7 +248,7 @@ export default function Home() {
                   padding: "20px",
                   width: "calc(90% - 20px)",
                   marginLeft : "calc(5% - 20px)",
-                  height: "330px",
+                  height: "290px",
                   color: "white",
                   textAlign: "center",
                   transition: "transform 0.3s ease",
@@ -290,28 +290,18 @@ export default function Home() {
                 style={{ 
                 color: "blue",
                 position: "absolute",
-                bottom: "-15px",
+                bottom: "-25px",
                 left: "25%",
                 textAlign: "center",
                 padding : "10px",
-                width : "220px",
+                width : "200px",
               }}
               >
                   <div className="label">
                       <span className="hover-effect"></span>
-                      <span onClick={() => {navigate.push("/nft")}} className="label-text" style={{ padding : "4px" , paddingLeft : "0px" , fontSize : "26px" , color : "#f4f4f4"}}>Orion NFT's</span>
+                      <span onClick={() => {navigate.push("/nft")}} className="label-text" style={{ padding : "1px" , paddingLeft : "0px" , fontSize : "20px" , color : "#f4f4f4"}}>Orion NFT's</span>
                   </div>
               </button>
-                <h2 style={{ 
-                  fontSize: "16px", 
-                  marginBottom: "15px",
-                  position: "absolute",
-                  bottom: "-10px",
-                  left: "20px",
-                  color : "gray"
-                }}>
-                  Comming Soon
-                </h2>
               </Flex>
           {/* Card 2 */}
               <Flex 
@@ -323,7 +313,7 @@ export default function Home() {
                   padding: "20px",
                   width: "calc(90% - 20px)",
                   marginLeft: "calc(5% - 20px)",
-                  height: "330px",
+                  height: "290px",
                   color: "white",
                   textAlign: "center",
                   transition: "transform 0.3s ease",
@@ -339,17 +329,15 @@ export default function Home() {
                 }}
               >
                 <h2 style={{ 
-                  fontSize: "30px", 
-                  marginBottom: "15px",
-                  top: "20px",
-                  left: "20px",
+                  fontSize: "30px",
+                  marginBottom: "2px",
                   color : "white",
                   textDecoration : "uppercase"
                 }}>
                   MANAGE YOUR WALLET
                 </h2>
                 <p style={{ 
-                  fontSize: "16px",
+                  fontSize: "12px",
                   lineHeight: "1.5",
                   textAlign: "center",
                   color : "#ff4654",
@@ -363,32 +351,32 @@ export default function Home() {
                       style={{ 
                       color: "blue",
                       position: "absolute",
-                      bottom: "-15px",
+                      bottom: "-25px",
                       left: "5%",
                       textAlign: "center",
                       padding : "10px",
-                      width : "220px",
+                      width : "180px",
                     }}
                     >
-                        <div className="label">
-                            <span className="hover-effect"></span>
-                            <span className="label-text" style={{ padding : "4px" , paddingLeft : "0px" , fontSize : "26px" , color : "#f4f4f4"}}>Generate Seed</span>
-                        </div>
+                      <div className="label">
+                          <span className="hover-effect"></span>
+                          <span className="label-text" style={{ padding : "1px" , paddingLeft : "0px" , fontSize : "20px" , color : "#f4f4f4"}}>Generate Seed</span>
+                      </div>
                     </button>
                     <button className="outline" type="button"
                       style={{ 
                       color: "#ff4654",
                       position: "absolute",
-                      bottom: "-15px",
+                      bottom: "-25px",
                       left: "53%",
                       textAlign: "center",
                       padding : "10px",
-                      width : "220px",
+                      width : "180px",
                     }}
                     >
                         <div className="label">
                             <span className="hover-effect" style={{ backgroundColor : "blue"}}></span>
-                            <span className="label-text" style={{ padding : "4px" , paddingLeft : "0px" , fontSize : "26px" , color : "#f4f4f4" }}>Import Seed</span>
+                            <span className="label-text" style={{ padding : "1px" , paddingLeft : "0px" , fontSize : "20px" , color : "#f4f4f4" }}>Import Seed</span>
                         </div>
                     </button>
                 </Flex>
@@ -406,7 +394,7 @@ export default function Home() {
                     padding: "20px",
                     width: "calc(90% - 20px)",
                     marginLeft: "calc(5% - 20px)",
-                    height: "330px",
+                    height: "290px",
                     color: "white",
                     textAlign: "center",
                     transition: "transform 0.3s ease",
@@ -424,7 +412,7 @@ export default function Home() {
                       justifyContent: "center", 
                       alignItems: "center",
                       zIndex: 1,
-                      gap: "20px"
+                      gap: "25px"
                     }}
                   >
                     {[coin1, coin2, coin3].map((coin, index) => (
