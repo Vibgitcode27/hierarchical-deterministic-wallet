@@ -4,6 +4,7 @@ import React, { useState , useRef , useEffect } from 'react';
 import { Flex, Avatar } from 'antd';
 import ethLogo from "../../assets/ethereum-6903901_1280.png";
 import solLogo from "../../assets/solana-sol-icon.png";
+import { generateSeedPhrase } from '@/app/components/helpers/helperFunctions';
 import { 
   WalletOutlined, 
   CopyOutlined, 
@@ -53,34 +54,35 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  
   return (
     <div 
-      ref={dropdownRef} 
-      className="relative w-full"
-      style={{ zIndex: 10 }}
+    ref={dropdownRef} 
+    className="relative w-full"
+    style={{ zIndex: 10 }}
     >
       <button 
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between bg-[#1c49ff]/10 text-white p-3 rounded-lg"
-      >
+        >
         {selectedOption ? selectedOption.name : label}
         <ChevronDown 
           className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} 
-        />
+          />
       </button>
       {isOpen && (
         <div 
-          className="absolute top-full mt-2 w-full bg-[#1c49ff]/20 rounded-lg shadow-lg"
-          style={{ backdropFilter: 'blur(10px)' }}
+        className="absolute top-full mt-2 w-full bg-[#1c49ff]/20 rounded-lg shadow-lg"
+        style={{ backdropFilter: 'blur(10px)' }}
         >
           {options.map((option) => (
             <div 
-              key={option.name}
-              onClick={() => {
-                onSelect(option);
-                setIsOpen(false);
-              }}
-              className="p-3 hover:bg-[#1c49ff]/30 cursor-pointer text-white"
+            key={option.name}
+            onClick={() => {
+              onSelect(option);
+              setIsOpen(false);
+            }}
+            className="p-3 hover:bg-[#1c49ff]/30 cursor-pointer text-white"
             >
               {option.name}
             </div>
@@ -94,8 +96,16 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
 
 export default function WalletPage() {
   const [activeMenu, setActiveMenu] = useState<'home' | 'import' | 'wallet' | 'generate' | 'import'>('home');
+  const [regenerate , toggleRegenerate] = useState<boolean>(false);
   const [selectedBlockchain, setSelectedBlockchain] = useState<Option | null>(null);
   const [selectedAccount, setSelectedAccount] = useState(0);
+  
+  useEffect(() => {
+    if (activeMenu === 'generate') {
+      let seed = generateSeedPhrase();
+      setSeedPhrase(seed);
+    }
+  }, [activeMenu , regenerate]);
 
   const blockchains = [
     { 
@@ -501,7 +511,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title }) => {
 
                 <div style={{ display: 'flex', justifyContent: 'center', gap: '20px' }}>
                   <button 
-                    // onClick={generateSeedPhrase}
+                    onClick={() => {toggleRegenerate(!regenerate)}}
                     style={{
                       backgroundColor: '#ff4654',
                       color: 'white',
