@@ -1,10 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { counterSlice } from "./features/counter/counterSlice";
-
+import { seedSlice } from "./features/wallet/walletSlice";
 export const makeStore = () => {
   return configureStore({
     reducer: {
       counter: counterSlice.reducer,
+      seed : seedSlice.reducer,
     },
   });
 };

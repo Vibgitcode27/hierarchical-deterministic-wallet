@@ -1,5 +1,5 @@
 import { useState , useEffect } from "react"
-import { generateSeedPhrase } from "./helpers/helperFunctions";
+import { generateSeedPhrase } from "../helpers/helperFunctions";
 
 interface RenderGenerateSeedPhraseProps {
     activeMenu: 'home' | 'import' | 'wallet' | 'generate';
@@ -36,6 +36,10 @@ interface RenderGenerateSeedPhraseProps {
         alert('Please copy the seed phrase and confirm that you have copied it.');
       }
     };
+
+    const handleStoreLocally = () => {
+      localStorage.setItem('mnemonic', seedPhrase);
+    }
     return (
     <>
     <div 
@@ -199,7 +203,7 @@ interface RenderGenerateSeedPhraseProps {
           </h3>
           <p>Your seed phrase has been successfully generated and verified.</p>
           <button 
-            onClick={() => { setActiveMenu('wallet')}}
+            onClick={() => { setActiveMenu('wallet') , handleStoreLocally()}}
             style={{
               backgroundColor: '#74ccc9',
               color: 'black',

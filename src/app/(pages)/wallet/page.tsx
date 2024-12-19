@@ -5,7 +5,7 @@ import { Flex, Avatar } from 'antd';
 import ethLogo from "../../assets/ethereum-6903901_1280.png";
 import solLogo from "../../assets/solana-sol-icon.png";
 // import { generateSeedPhrase } from '@/app/components/helpers/helperFunctions';
-import RenderGenerateSeedPhrase from '@/app/components/generateSeed';
+import RenderGenerateSeedPhrase from '@/app/components/walletComponents/generateSeed';
 import { 
   WalletOutlined, 
   CopyOutlined, 
