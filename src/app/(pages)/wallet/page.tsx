@@ -1,12 +1,15 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState , useRef } from 'react';
 import { Flex, Avatar, Select } from 'antd';
 import RenderGenerateSeedPhrase from '@/app/components/walletComponents/generateSeed';
 import RenderImportSeedPhrase from '@/app/components/walletComponents/importSeedPhrase';
 import SendModal from '@/app/components/walletComponents/sendWalletModal';
 import ReceiveModal from '@/app/components/walletComponents/receiveWalletModal';
 import SwapModal from '@/app/components/walletComponents/swapWalletModal';
+import ethLogo from "../../assets/ethereum-6903901_1280.png";
+import solLogo from "../../assets/solana-sol-icon.png";
+import  styles from "../../styles/dropdown.module.css"
 import { 
   WalletOutlined, 
   CopyOutlined, 
@@ -16,10 +19,21 @@ import {
 } from '@ant-design/icons';
 import "../../styles/button.css";
 
+interface BlockchainOption {
+  name: string;
+  logo: string;
+}
+
 export default function WalletPage() {
   const [activeMenu, setActiveMenu] = useState<'home' | 'import' | 'wallet' | 'generate' | 'import'>('home');
   const [selectedAccount, setSelectedAccount] = useState(0);
-  const [selectedBlockchain, setSelectedBlockchain] = useState('all');
+
+  const blockchains: BlockchainOption[] = [
+    { name: "Ethereum", logo: "/logos/ethereum.png" },
+    { name: "Solana", logo: "/logos/solana.png" },
+    { name: "Polygon", logo: "/logos/polygon.png" },
+    { name: "Binance", logo: "/logos/binance.png" },
+  ];
 
   const accounts = [
     {
@@ -48,28 +62,22 @@ export default function WalletPage() {
     }
   ];
 
-const blockchains = [
-    { 
-      value: 'all', 
-      label: 'All Blockchains',
-      icon: '🌐',
-    },
-    { 
-      value: 'ethereum', 
-      label: 'Ethereum',
-      icon: '⟠',
-    },
-    { 
-      value: 'solana', 
-      label: 'Solana',
-      icon: '◎',
-    }
-  ];
+  const handleSelect = (blockchain: BlockchainOption) => {
+    setSelectedBlockchain(blockchain);
+    setDropdownOpen(false);
+  };
 
+  const toggleDropdown = () => {
+    setDropdownOpen(!isDropdownOpen);
+  };
 
-  const filteredAccounts = selectedBlockchain === 'all' 
+  const [selectedBlockchain, setSelectedBlockchain] = useState<BlockchainOption | null>(null);
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const filteredAccounts = selectedBlockchain === null 
     ? accounts 
-    : accounts.filter(account => account.blockchain === selectedBlockchain);
+    : accounts.filter(account => account.blockchain === selectedBlockchain.name);
 
   const [activeModal, setActiveModal] = useState<'send' | 'receive' | 'swap' | null>(null);
 
@@ -151,17 +159,6 @@ const blockchains = [
             }}>
               My Wallets
             </h2>
-
-            <Select
-              defaultValue="all"
-              style={{ width: '100%' }}
-              onChange={(value) => {
-                setSelectedBlockchain(value);
-                setSelectedAccount(0);  // Reset selected account when changing blockchain
-              }}
-              options={blockchains}
-              className="blockchain-select"
-            />
           </Flex>
 
           {filteredAccounts.map((account, index) => (
@@ -363,15 +360,50 @@ const blockchains = [
         }}>
           W A L L E T
         </h1>
-        <h1 style={{ 
-          fontSize: "55px", 
-          fontFamily: "sans-serif", 
-          fontWeight: "600", 
-          color: "white",
-          marginBottom: "30px"
-        }}>
-          # Manage Your Digital Assets
-        </h1>
+        <Flex align='center' justify='space-between'>
+          <h1 style={{ 
+            fontSize: "55px", 
+            fontFamily: "sans-serif", 
+            fontWeight: "600", 
+            color: "white",
+            marginBottom: "30px"
+          }}>
+            # Manage Your Digital Assets
+          </h1>
+          {activeMenu === 'wallet' && (
+            <div className={styles.dropdown} ref={dropdownRef}>
+              {/* Selected Blockchain Avatar */}
+              <div className={styles.selected} onClick={toggleDropdown}>
+                {selectedBlockchain ? (
+                  <img
+                    src={selectedBlockchain.logo}
+                    alt={selectedBlockchain.name}
+                    className={styles.avatar}
+                  />
+                ) : (
+                  <span className={styles.placeholder}>Select Blockchain</span>
+                )}
+              </div>
+
+              {/* Dropdown Options */}
+              {isDropdownOpen && (
+                <div className={styles.options}>
+                  {blockchains.map((blockchain) => (
+                    <div
+                      key={blockchain.name}
+                      className={styles.option}
+                      onClick={() => handleSelect(blockchain)}
+                    >
+                      <img src={blockchain.logo} alt={blockchain.name} className={styles.optionLogo} />
+                      <span className={styles.optionName}>{blockchain.name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )
+          }
+        </Flex>
 
         {activeMenu === 'home' && renderGenerateWallet()}
         {activeMenu === 'generate' && <RenderGenerateSeedPhrase activeMenu={activeMenu} setActiveMenu={setActiveMenu}/>}
