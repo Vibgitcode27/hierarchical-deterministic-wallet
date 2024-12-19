@@ -1,4 +1,5 @@
 import { useState , useEffect } from "react"
+import { setSeedPhraseInSession } from "@/lib/features/wallet/walletSlice";
 import { generateSeedPhrase } from "../helpers/helperFunctions";
 
 interface RenderGenerateSeedPhraseProps {
@@ -203,7 +204,7 @@ interface RenderGenerateSeedPhraseProps {
           </h3>
           <p>Your seed phrase has been successfully generated and verified.</p>
           <button 
-            onClick={() => { setActiveMenu('wallet') , handleStoreLocally()}}
+            onClick={() => { setActiveMenu('wallet') , handleStoreLocally() , setSeedPhraseInSession(seedPhrase)}}
             style={{
               backgroundColor: '#74ccc9',
               color: 'black',
