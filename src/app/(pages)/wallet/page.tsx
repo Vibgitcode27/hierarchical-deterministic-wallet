@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState , useRef } from 'react';
 import { Flex, Avatar } from 'antd';
+import React, { useState , useRef ,useEffect } from 'react';
+import { useAppSelector , useAppDispatch } from '@/lib/hooks';
 import RenderGenerateSeedPhrase from '@/app/components/walletComponents/generateSeed';
 import RenderImportSeedPhrase from '@/app/components/walletComponents/importSeedPhrase';
 import SendModal from '@/app/components/walletComponents/sendWalletModal';
@@ -11,6 +12,7 @@ import ethLogo from "../../assets/etherium_dropdown.jpg";
 import solLogo from "../../assets/solana_dropdown.png";
 import xtzLogo from "../../assets/tezos_logo.png";
 import  styles from "../../styles/dropdown.module.css"
+import { generateEtheriumAccount , generateSolanaAccount } from '@/app/components/helpers/helperFunctions';
 import {
   CopyOutlined, 
   SwapOutlined,
@@ -19,6 +21,7 @@ import {
   ArrowDownOutlined
 } from '@ant-design/icons';
 import "../../styles/button.css";
+import { mnemonicToSeedSync } from 'bip39';
 
 interface BlockchainOption {
   name: string;
@@ -35,32 +38,32 @@ export default function WalletPage() {
     { name: "Tezos", logo: xtzLogo.src },
   ];
 
-  const accounts = [
-    {
-      id: 1,
-      name: 'Ethereum Wallet 1',
-      address: '0x1234...5678',
-      balance: '0.5 ETH',
-      blockchain: 'Ethereum',
-      network: 'mainnet'
-    },
-    {
-      id: 2,
-      name: 'Solana Wallet 1',
-      address: 'Sol1234...5678',
-      balance: '0.2 SOL',
-      blockchain: 'Solana',
-      network: 'mainnet'
-    },
-    {
-      id: 3,
-      name: 'Ethereum Wallet 2',
-      address: '0x9876...4321',
-      balance: '1.2 ETH',
-      blockchain: 'Ethereum',
-      network: 'mainnet'
-    }
-  ];
+  // const accounts = [
+  //   {
+  //     id: 1,
+  //     name: 'Ethereum Wallet 1',
+  //     address: '0x1234...5678',
+  //     balance: '0.5 ETH',
+  //     blockchain: 'Ethereum',
+  //     network: 'mainnet'
+  //   },
+  //   {
+  //     id: 2,
+  //     name: 'Solana Wallet 1',
+  //     address: 'Sol1234...5678',
+  //     balance: '0.2 SOL',
+  //     blockchain: 'Solana',
+  //     network: 'mainnet'
+  //   },
+  //   {
+  //     id: 3,
+  //     name: 'Ethereum Wallet 2',
+  //     address: '0x9876...4321',
+  //     balance: '1.2 ETH',
+  //     blockchain: 'Ethereum',
+  //     network: 'mainnet'
+  //   }
+  // ];
 
   const handleSelect = (blockchain: BlockchainOption) => {
     setSelectedBlockchain(blockchain);
@@ -70,14 +73,213 @@ export default function WalletPage() {
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
   };
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // Adding Code To generate accounts and store them in local storage
+
+  interface StoredWalletData {
+    seedPhrase: string;
+    accountCounters: {
+      Ethereum: number;
+      Solana: number;
+    };
+    accounts: Array<{
+      id: number;
+      name: string;
+      address: string;
+      balance: string;
+      blockchain: string;
+      network: string;
+      privateKey: string;
+    }>;
+  }
+
+  const WALLET_STORAGE_KEY = 'walletData';
+
+  const [seedPhrase, setSeedPhrase] = useState<string>(() => {
+    const stored = localStorage.getItem(WALLET_STORAGE_KEY);
+    return stored ? JSON.parse(stored).seedPhrase : '';
+  });
+
+  const [accountCounters, setAccountCounters] = useState(() => {
+    const stored = localStorage.getItem(WALLET_STORAGE_KEY);
+    return stored ? JSON.parse(stored).accountCounters : { Ethereum: 0, Solana: 0 };
+  });
+
+  const [accounts, setAccounts] = useState(() => {
+    const stored = localStorage.getItem(WALLET_STORAGE_KEY);
+    return stored ? JSON.parse(stored).accounts : [];
+  });
+
+    useEffect(() => {
+      if (seedPhrase) {
+        const walletData: StoredWalletData = {
+          seedPhrase,
+          accountCounters,
+          accounts
+        };
+        localStorage.setItem(WALLET_STORAGE_KEY, JSON.stringify(walletData));
+      }
+    }, [seedPhrase, accountCounters, accounts]);
+
+    const seedMnemonic = useAppSelector(state => state.seed.seedPhrase);
+
+    useEffect(() => {
+      if (accountCounters.Ethereum === 0 && accountCounters.Solana === 0 && seedPhrase) {
+        generateInitialAccounts(seedMnemonic);
+      }
+    }, [seedMnemonic, accountCounters]);
+
+    const generateInitialAccounts = (mnemonic: string) => {
+      const stored = localStorage.getItem(WALLET_STORAGE_KEY);
+      if (stored) {
+        const data = JSON.parse(stored);
+        if (data.seedPhrase === mnemonic) {
+          setAccountCounters(data.accountCounters);
+          setAccounts(data.accounts);
+          return;
+        }
+    }
+    const seed = mnemonicToSeedSync(mnemonic);
+    const ethAccount = generateEtheriumAccount(seed, 0);
+    const solAccount = generateSolanaAccount(seed, 0);
+    
+    const initialCounters = {
+      Ethereum: 1,
+      Solana: 1
+    };
+    
+    const initialAccounts = [
+      {
+        id: 1,
+        name: 'Ethereum Wallet 1',
+        address: ethAccount.publicKey,
+        privateKey: ethAccount.privateKey,
+        balance: '0 ETH',
+        blockchain: 'Ethereum',
+        network: 'mainnet'
+      },
+      {
+        id: 2,
+        name: 'Solana Wallet 1',
+        address: solAccount.publicKey,
+        privateKey: solAccount.privateKey,
+        balance: '0 SOL',
+        blockchain: 'Solana',
+        network: 'mainnet'
+      }
+    ];
+
+    setAccountCounters(initialCounters);
+    setAccounts(initialAccounts);
+    setSeedPhrase(mnemonic);
+  };
+
+  // Function to add new Ethereum account
+  const addNewEthereumAccount = () => {
+    if (!seedPhrase) return;
+    
+    const seed = mnemonicToSeedSync(seedPhrase);
+    const newIndex = accountCounters.Ethereum;
+    const ethAccount = generateEtheriumAccount(seed, newIndex);
+    
+    const newAccount = {
+      id: accounts.length + 1,
+      name: `Ethereum Wallet ${newIndex + 1}`,
+      address: ethAccount.publicKey,
+      privateKey: ethAccount.privateKey,
+      balance: '0 ETH',
+      blockchain: 'Ethereum',
+      network: 'mainnet'
+    };
+
+    setAccounts((prev: typeof accounts) => [...prev, newAccount]);
+    setAccountCounters((prev: typeof accountCounters) => ({
+      ...prev,
+      Ethereum: prev.Ethereum + 1
+    }));
+  };
+
+  // Function to add new Solana account
+  const addNewSolanaAccount = () => {
+    if (!seedPhrase) return;
+    
+    const seed = mnemonicToSeedSync(seedPhrase);
+    const newIndex = accountCounters.Solana;
+    const solAccount = generateSolanaAccount(seed, newIndex);
+    
+    const newAccount = {
+      id: accounts.length + 1,
+      name: `Solana Wallet ${newIndex + 1}`,
+      address: solAccount.publicKey,
+      privateKey: solAccount.privateKey,
+      balance: '0 SOL',
+      blockchain: 'Solana',
+      network: 'mainnet'
+    };
+
+    setAccounts((prev: typeof accounts) => [...prev, newAccount]);
+    setAccountCounters((prev: typeof accountCounters) => ({
+      ...prev,
+      Solana: prev.Solana + 1
+    }));
+  };
+
+  // Then modify your "Add More" button click handler to use these functions
+  const handleAddAccount = () => {
+    if (selectedBlockchain.name === 'Ethereum') {
+      addNewEthereumAccount();
+    } else if (selectedBlockchain.name === 'Solana') {
+      addNewSolanaAccount();
+    }
+  };
+
+
+  const clearWalletData = () => {
+    localStorage.removeItem(WALLET_STORAGE_KEY);
+    setSeedPhrase('');
+    setAccountCounters({ Ethereum: 0, Solana: 0 });
+    setAccounts([]);
+    setActiveMenu('home');
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   const [selectedBlockchain, setSelectedBlockchain] = useState<BlockchainOption>({ name: "Ethereum", logo : ethLogo.src });
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const filteredAccounts = selectedBlockchain === null 
     ? accounts 
-    : accounts.filter(account => account.blockchain === selectedBlockchain.name);
+    : accounts.filter((account: { blockchain: string }) => account.blockchain === selectedBlockchain.name);
 
   const [activeModal, setActiveModal] = useState<'send' | 'receive' | 'swap' | null>(null);
 
@@ -163,7 +365,7 @@ export default function WalletPage() {
             </h2>
           </Flex>
 
-          {filteredAccounts.map((account, index) => (
+          {filteredAccounts.map((account: { id: number; name: string; address: string; balance: string; blockchain: string; network: string; privateKey: string }, index: number) => (
             <Flex
               key={account.id}
               align="center"
@@ -203,7 +405,7 @@ export default function WalletPage() {
                     color: '#888', 
                     fontSize: "16px" 
                   }}>
-                    {account.address}
+                    {`${account.address.slice(0, 8)}...${account.address.slice(-4)}`}
                   </small>
                 </Flex>
               </Flex>
@@ -230,7 +432,13 @@ export default function WalletPage() {
                 width : "70%"
               }}
             >
-              <Flex align="center" justify='center' gap={15} style={{ width : "200%" , color : "#f4f4f4"}} >
+              <Flex 
+                gap={15} 
+                align="center" 
+                justify='center' 
+                style={{ width : "200%" , color : "#f4f4f4"}}
+                onClick={handleAddAccount}
+              >
                 Add More
               </Flex>
             </Flex>
@@ -266,7 +474,7 @@ export default function WalletPage() {
                 </h1>
                 <Flex align="center" gap={10}>
                   <span style={{ color: '#888' }}>
-                    {currentAccount.address}
+                   {`${currentAccount.address.slice(0, 15)}...${currentAccount.address.slice(-8)}`}
                   </span>
                   <CopyOutlined 
                     style={{ 
