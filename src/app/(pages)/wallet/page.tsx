@@ -7,12 +7,11 @@ import RenderImportSeedPhrase from '@/app/components/walletComponents/importSeed
 import SendModal from '@/app/components/walletComponents/sendWalletModal';
 import ReceiveModal from '@/app/components/walletComponents/receiveWalletModal';
 import SwapModal from '@/app/components/walletComponents/swapWalletModal';
-import ethLogo from "../../assets/ethereum-6903901_1280.png";
-import solLogo from "../../assets/solana-sol-icon.png";
+import ethLogo from "../../assets/etherium_dropdown.jpg";
+import solLogo from "../../assets/solana_dropdown.png";
 import xtzLogo from "../../assets/tezos_logo.png";
 import  styles from "../../styles/dropdown.module.css"
-import { 
-  WalletOutlined, 
+import {
   CopyOutlined, 
   SwapOutlined,
   SendOutlined,
@@ -71,7 +70,7 @@ export default function WalletPage() {
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
   };
-
+  
   const [selectedBlockchain, setSelectedBlockchain] = useState<BlockchainOption>({ name: "Ethereum", logo : ethLogo.src });
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -145,7 +144,7 @@ export default function WalletPage() {
         <Flex 
           vertical 
           style={{ 
-            width: '300px', 
+            width: '380px', 
             backgroundColor: 'rgba(28, 73, 255, 0.1)', 
             padding: '20px', 
             height: '100%',
@@ -156,7 +155,9 @@ export default function WalletPage() {
             <h2 style={{ 
               color: 'white', 
               marginBottom: '10px',
-              fontSize: '30px'
+              fontSize: '30px',
+              fontFamily : "DINNext",
+              fontWeight : "800"
             }}>
               My Wallets
             </h2>
@@ -181,26 +182,26 @@ export default function WalletPage() {
             >
               <Flex align="center" gap={15}>
                 <Avatar 
-                  size={55} 
-                  icon={<WalletOutlined />} 
+                  size={50} 
+                  icon={ <img src={selectedBlockchain.logo}/> } 
                   style={{ 
                     backgroundColor: "#1c49ff", 
                     display: 'flex', 
                     alignItems: 'center', 
-                    justifyContent: 'center' 
+                    justifyContent: 'center',
                   }} 
                 />
                 <Flex vertical>
                   <span style={{ 
                     color: 'white', 
                     fontWeight: 'bold', 
-                    fontSize: "18px" 
+                    fontSize: "17px" 
                   }}>
                     {account.name}
                   </span>
                   <small style={{ 
                     color: '#888', 
-                    fontSize: "14px" 
+                    fontSize: "16px" 
                   }}>
                     {account.address}
                   </small>
@@ -208,13 +209,33 @@ export default function WalletPage() {
               </Flex>
               <span style={{ 
                 color: 'white', 
-                fontWeight: 'bold' 
+                fontWeight: 'bold',
+                fontSize: "12px"
               }}>
                 {account.balance}
               </span>
             </Flex>
           ))}
-        </Flex>
+          <Flex align='center' justify='center' style={{ width : "100%"}}>
+            <Flex
+              align="center"
+              justify="space-between"
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.1)',
+                padding: '15px',
+                borderRadius: '10px',
+                marginTop: '15px',
+                cursor: 'pointer',
+                transition: 'background-color 0.3s ease',
+                width : "70%"
+              }}
+            >
+              <Flex align="center" justify='center' gap={15} style={{ width : "200%" , color : "#f4f4f4"}} >
+                Add More
+              </Flex>
+            </Flex>
+            </Flex>
+          </Flex>
 
         {currentAccount && (
           <Flex 
@@ -372,18 +393,18 @@ export default function WalletPage() {
             Manage Your Digital Assets
           </h1>
           {activeMenu === 'wallet' && (
-            <div className={styles.dropdown} ref={dropdownRef}>
+            <div style={{ userSelect : "none"}} className={styles.dropdown} ref={dropdownRef}>
               {/* Selected Blockchain Avatar */}
               <div className={styles.selected} onClick={toggleDropdown}>
                 {selectedBlockchain ? (
-                  <Flex>
+                  <Flex gap={0}>
                     <Avatar
                       src={selectedBlockchain.logo}
                       alt={selectedBlockchain.name}
                       style={{ backgroundColor : "rgba(255,255,255,0.1)" , padding : "3px"}}
                       size={50}
                     />
-                    <ArrowDownOutlined size={100} style={{ marginLeft : "20px" , color :"white"}} />
+                    <ArrowDownOutlined style={{ marginLeft : "20px" , color :"white" , fontSize : "20px"}} />
                   </Flex>
                 ) : (
                   <span className={styles.placeholder}>Select Blockchain</span>
