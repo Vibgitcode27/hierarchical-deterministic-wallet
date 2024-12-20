@@ -10,9 +10,8 @@
 }
 
 @font-face {
-  font-family: 'DIN Next LT Pro Bold';
-  src: url('//db.onlinewebfonts.com/t/3a88649e176a40a6d80b395ca0ae430d.eot');
-  src: url('//db.onlinewebfonts.com/t/3a88649e176a40a6d80b395ca0ae430d.eot?#iefix') format('embedded-opentype'), url('//db.onlinewebfonts.com/t/3a88649e176a40a6d80b395ca0ae430d.woff2') format('woff2'), url('//db.onlinewebfonts.com/t/3a88649e176a40a6d80b395ca0ae430d.woff') format('woff'), url('//db.onlinewebfonts.com/t/3a88649e176a40a6d80b395ca0ae430d.ttf') format('truetype'), url('//db.onlinewebfonts.com/t/3a88649e176a40a6d80b395ca0ae430d.svg#DIN Next LT Pro Bold') format('svg');
+  font-family: 'DINNext';
+  src: url('./assets/fonts/DIN-NEXT/DINNextW1G-Regular.otf') format('opentype');
 }
 
 :root {

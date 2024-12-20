@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState , useRef } from 'react';
-import { Flex, Avatar, Select } from 'antd';
+import { Flex, Avatar } from 'antd';
 import RenderGenerateSeedPhrase from '@/app/components/walletComponents/generateSeed';
 import RenderImportSeedPhrase from '@/app/components/walletComponents/importSeedPhrase';
 import SendModal from '@/app/components/walletComponents/sendWalletModal';
@@ -9,13 +9,15 @@ import ReceiveModal from '@/app/components/walletComponents/receiveWalletModal';
 import SwapModal from '@/app/components/walletComponents/swapWalletModal';
 import ethLogo from "../../assets/ethereum-6903901_1280.png";
 import solLogo from "../../assets/solana-sol-icon.png";
+import xtzLogo from "../../assets/tezos_logo.png";
 import  styles from "../../styles/dropdown.module.css"
 import { 
   WalletOutlined, 
   CopyOutlined, 
-  SendOutlined, 
-  SwapOutlined, 
-  QrcodeOutlined 
+  SwapOutlined,
+  SendOutlined,
+  QrcodeOutlined,
+  ArrowDownOutlined
 } from '@ant-design/icons';
 import "../../styles/button.css";
 
@@ -29,10 +31,9 @@ export default function WalletPage() {
   const [selectedAccount, setSelectedAccount] = useState(0);
 
   const blockchains: BlockchainOption[] = [
-    { name: "Ethereum", logo: "/logos/ethereum.png" },
-    { name: "Solana", logo: "/logos/solana.png" },
-    { name: "Polygon", logo: "/logos/polygon.png" },
-    { name: "Binance", logo: "/logos/binance.png" },
+    { name: "Ethereum", logo : ethLogo.src },
+    { name: "Solana", logo: solLogo.src },
+    { name: "Tezos", logo: xtzLogo.src },
   ];
 
   const accounts = [
@@ -41,7 +42,7 @@ export default function WalletPage() {
       name: 'Ethereum Wallet 1',
       address: '0x1234...5678',
       balance: '0.5 ETH',
-      blockchain: 'ethereum',
+      blockchain: 'Ethereum',
       network: 'mainnet'
     },
     {
@@ -49,7 +50,7 @@ export default function WalletPage() {
       name: 'Solana Wallet 1',
       address: 'Sol1234...5678',
       balance: '0.2 SOL',
-      blockchain: 'solana',
+      blockchain: 'Solana',
       network: 'mainnet'
     },
     {
@@ -57,7 +58,7 @@ export default function WalletPage() {
       name: 'Ethereum Wallet 2',
       address: '0x9876...4321',
       balance: '1.2 ETH',
-      blockchain: 'ethereum',
+      blockchain: 'Ethereum',
       network: 'mainnet'
     }
   ];
@@ -71,7 +72,7 @@ export default function WalletPage() {
     setDropdownOpen(!isDropdownOpen);
   };
 
-  const [selectedBlockchain, setSelectedBlockchain] = useState<BlockchainOption | null>(null);
+  const [selectedBlockchain, setSelectedBlockchain] = useState<BlockchainOption>({ name: "Ethereum", logo : ethLogo.src });
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -272,7 +273,7 @@ export default function WalletPage() {
                     cursor: 'pointer'
                   }}
                 >
-                  <SendOutlined /> Send
+                  <Avatar size={40} icon={<SendOutlined style={{ height : "20px" , paddingLeft : "3px"}} />} style={{ backgroundColor : "black" , padding : "15px"}}/> Send
                 </button>
                 <button
                   onClick={() => setActiveModal('swap')}
@@ -289,7 +290,7 @@ export default function WalletPage() {
                     cursor: 'pointer'
                   }}
                 >
-                  <SwapOutlined /> Swap
+                   <Avatar size={40} icon={<SwapOutlined style={{ height : "20px"}} />} style={{ backgroundColor : "black" , padding : "15px"}}/> Swap
                 </button>
                 <button
                   onClick={() => setActiveModal('receive')}
@@ -306,7 +307,7 @@ export default function WalletPage() {
                     cursor: 'pointer'
                   }}
                 >
-                  <QrcodeOutlined /> Receive
+                   <Avatar size={40} icon={<QrcodeOutlined style={{ height : "20px"}} />} style={{ backgroundColor : "black" , padding : "15px"}}/> Receive
                 </button>
               </Flex>
             </Flex>
@@ -347,7 +348,7 @@ export default function WalletPage() {
 
   return (
     <div style={{ 
-      height: "93vh", 
+      height: "94vh", 
       borderRadius: "30px", 
       padding: "20px",
       backgroundColor: '#121212'
@@ -363,23 +364,27 @@ export default function WalletPage() {
         <Flex align='center' justify='space-between'>
           <h1 style={{ 
             fontSize: "55px", 
-            fontFamily: "sans-serif", 
+            fontFamily: 'DINNext',
             fontWeight: "600", 
             color: "white",
             marginBottom: "30px"
           }}>
-            # Manage Your Digital Assets
+            Manage Your Digital Assets
           </h1>
           {activeMenu === 'wallet' && (
             <div className={styles.dropdown} ref={dropdownRef}>
               {/* Selected Blockchain Avatar */}
               <div className={styles.selected} onClick={toggleDropdown}>
                 {selectedBlockchain ? (
-                  <img
-                    src={selectedBlockchain.logo}
-                    alt={selectedBlockchain.name}
-                    className={styles.avatar}
-                  />
+                  <Flex>
+                    <Avatar
+                      src={selectedBlockchain.logo}
+                      alt={selectedBlockchain.name}
+                      style={{ backgroundColor : "rgba(255,255,255,0.1)" , padding : "3px"}}
+                      size={50}
+                    />
+                    <ArrowDownOutlined size={100} style={{ marginLeft : "20px" , color :"white"}} />
+                  </Flex>
                 ) : (
                   <span className={styles.placeholder}>Select Blockchain</span>
                 )}
