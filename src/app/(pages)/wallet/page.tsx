@@ -31,43 +31,37 @@ interface BlockchainOption {
 export default function WalletPage() {
   const [activeMenu, setActiveMenu] = useState<'home' | 'import' | 'wallet' | 'generate' | 'import'>('home');
   const [selectedAccount, setSelectedAccount] = useState(0);
-
+  const [selectedNetwork , setSelectedNetwork] = useState<string>("Mainnet");
+  const [isNetWorkDropdownOpen, setNetworkDropdownOpen] = useState(false);
   const blockchains: BlockchainOption[] = [
     { name: "Ethereum", logo : ethLogo.src },
     { name: "Solana", logo: solLogo.src },
     { name: "Tezos", logo: xtzLogo.src },
   ];
 
-  // const accounts = [
-  //   {
-  //     id: 1,
-  //     name: 'Ethereum Wallet 1',
-  //     address: '0x1234...5678',
-  //     balance: '0.5 ETH',
-  //     blockchain: 'Ethereum',
-  //     network: 'mainnet'
-  //   },
-  //   {
-  //     id: 2,
-  //     name: 'Solana Wallet 1',
-  //     address: 'Sol1234...5678',
-  //     balance: '0.2 SOL',
-  //     blockchain: 'Solana',
-  //     network: 'mainnet'
-  //   },
-  //   {
-  //     id: 3,
-  //     name: 'Ethereum Wallet 2',
-  //     address: '0x9876...4321',
-  //     balance: '1.2 ETH',
-  //     blockchain: 'Ethereum',
-  //     network: 'mainnet'
-  //   }
-  // ];
+  const ethereumNetwork = [
+    { name: "Mainnet" },
+    { name: "Sepolia" },
+  ]
+
+  const solanaNetwork = [
+    { name: "Mainnet" },
+    { name: "Devnet" },
+  ]
+
+  const handleEthereumNetworkSelect = (network: string) => {
+    setSelectedNetwork(network);
+    setNetworkDropdownOpen(false);
+  }
+
+  const toggleNetworkDropdown = () => {
+    setNetworkDropdownOpen(!isNetWorkDropdownOpen);
+  }
 
   const handleSelect = (blockchain: BlockchainOption) => {
     setSelectedBlockchain(blockchain);
     setDropdownOpen(false);
+    setSelectedNetwork("Mainnet");
   };
 
   const toggleDropdown = () => {
@@ -409,13 +403,6 @@ export default function WalletPage() {
                   </small>
                 </Flex>
               </Flex>
-              <span style={{ 
-                color: 'white', 
-                fontWeight: 'bold',
-                fontSize: "12px"
-              }}>
-                {account.balance}
-              </span>
             </Flex>
           ))}
           <Flex align='center' justify='center' style={{ width : "100%"}}>
@@ -470,7 +457,7 @@ export default function WalletPage() {
                   margin: 0, 
                   fontSize: '40px' 
                 }}>
-                  {currentAccount.name}
+                  1221.00 ETH
                 </h1>
                 <Flex align="center" gap={10}>
                   <span style={{ color: '#888' }}>
@@ -549,14 +536,55 @@ export default function WalletPage() {
                 padding: '20px' 
               }}
             >
+            <Flex align='center' justify='space-between'>
               <h2 style={{ 
                 color: 'white', 
                 marginBottom: '20px',
-                fontSize: '30px'
+                fontSize: '30px',
               }}>
                 Recent Transactions
               </h2>
+              <div style={{ userSelect : "none" , marginBottom : "20px" , marginRight : "5px"}} className={styles.dropdown} ref={dropdownRef}>
+              <div className={styles.selected} onClick={toggleNetworkDropdown}>
+                {selectedNetwork ? (
+                  <Flex gap={0}>
+                    <h1 style={{ color : "cyan"}}>{selectedNetwork}</h1>
+                    <ArrowDownOutlined style={{ marginLeft : "20px" , color :"white" , fontSize : "20px"}} />
+                  </Flex>
+                ) : (
+                  <span className={styles.placeholder}>Select Blockchain</span>
+                )}
+              </div>              
+              {isNetWorkDropdownOpen && selectedBlockchain.name === "Ethereum" && (
+                <div className={styles.options}>
+                  {ethereumNetwork.map((network) => (
+                    <div
+                      key={network.name}
+                      className={styles.option}
+                      onClick={() => handleEthereumNetworkSelect(network.name)}
+                    >
+                      <span className={styles.optionName}>{network.name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {isNetWorkDropdownOpen && selectedBlockchain.name === "Solana" && (
+                <div className={styles.options}>
+                  {solanaNetwork.map((network) => (
+                    <div
+                      key={network.name}
+                      className={styles.option}
+                      onClick={() => handleEthereumNetworkSelect(network.name)}
+                    >
+                      <span className={styles.optionName}>{network.name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
               
+            </Flex>
               <Flex 
                 vertical 
                 align="center" 
@@ -612,7 +640,6 @@ export default function WalletPage() {
                       style={{ backgroundColor : "rgba(255,255,255,0.1)" , padding : "3px"}}
                       size={50}
                     />
-                    <ArrowDownOutlined style={{ marginLeft : "20px" , color :"white" , fontSize : "20px"}} />
                   </Flex>
                 ) : (
                   <span className={styles.placeholder}>Select Blockchain</span>
@@ -635,8 +662,7 @@ export default function WalletPage() {
                 </div>
               )}
             </div>
-          )
-          }
+          )}
         </Flex>
 
         {activeMenu === 'home' && renderGenerateWallet()}
