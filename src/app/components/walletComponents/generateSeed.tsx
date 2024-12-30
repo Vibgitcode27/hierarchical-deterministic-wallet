@@ -5,11 +5,13 @@ import { generateSeedPhrase } from "../helpers/helperFunctions";
 interface RenderGenerateSeedPhraseProps {
     activeMenu: 'home' | 'import' | 'wallet' | 'generate';
     setActiveMenu: React.Dispatch<React.SetStateAction<'home' | 'import' | 'wallet' | 'generate'>>;
+    setSeed: React.Dispatch<string>;
 }
   
   export default function RenderGenerateSeedPhrase({
     activeMenu,
     setActiveMenu,
+    setSeed,
   }: RenderGenerateSeedPhraseProps) {
     const [seedPhrase, setSeedPhrase] = useState<string>('venture lottery motor spell gloom venue cruel escape jump banner shell debris');
     const [regenerate , toggleRegenerate] = useState<boolean>(false);
@@ -204,7 +206,7 @@ interface RenderGenerateSeedPhraseProps {
           </h3>
           <p>Your seed phrase has been successfully generated and verified.</p>
           <button 
-            onClick={() => { setActiveMenu('wallet') , handleStoreLocally() , setSeedPhraseInSession(seedPhrase)}}
+            onClick={() => { setActiveMenu('wallet') ,setSeed(seedPhrase) , handleStoreLocally() , setSeedPhraseInSession(seedPhrase)}}
             style={{
               backgroundColor: '#74ccc9',
               color: 'black',

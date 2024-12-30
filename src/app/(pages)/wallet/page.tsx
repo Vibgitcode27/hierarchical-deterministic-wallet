@@ -33,6 +33,8 @@ export default function WalletPage() {
   const [selectedAccount, setSelectedAccount] = useState(0);
   const [selectedNetwork , setSelectedNetwork] = useState<string>("Mainnet");
   const [isNetWorkDropdownOpen, setNetworkDropdownOpen] = useState(false);
+  const [isSeedBackedUp, setSeedBackedUp] = useState(false);
+
   const blockchains: BlockchainOption[] = [
     { name: "Ethereum", logo : ethLogo.src },
     { name: "Solana", logo: solLogo.src },
@@ -104,6 +106,14 @@ export default function WalletPage() {
     }>;
   }
 
+  useEffect(() => {
+    if (!seedPhrase) {
+      setActiveMenu('home');
+    } else {
+      setActiveMenu('wallet');
+    }
+  } , []);
+
   const WALLET_STORAGE_KEY = 'walletData';
 
   const [seedPhrase, setSeedPhrase] = useState<string>(() => {
@@ -128,6 +138,7 @@ export default function WalletPage() {
           accountCounters,
           accounts
         };
+        console.log("Wallet Data Stored");
         localStorage.setItem(WALLET_STORAGE_KEY, JSON.stringify(walletData));
       }
     }, [seedPhrase, accountCounters, accounts]);
@@ -187,7 +198,11 @@ export default function WalletPage() {
 
   // Function to add new Ethereum account
   const addNewEthereumAccount = () => {
-    if (!seedPhrase) return;
+    if (!seedPhrase){ 
+      console.log(seedPhrase);
+      console.log("Seed Phrase Not Found");
+      return; 
+    } ;
     
     const seed = mnemonicToSeedSync(seedPhrase);
     const newIndex = accountCounters.Ethereum;
@@ -611,13 +626,20 @@ export default function WalletPage() {
       backgroundColor: '#121212'
     }}>
       <Flex vertical>
-        <h1 style={{ 
-          color: "#f4f4f4", 
-          fontSize: "20px", 
-          marginBottom: "10px" 
-        }}>
-          W A L L E T
-        </h1>
+        <Flex align='center' justify='space-between'>
+          <h1 style={{ 
+            color: "#f4f4f4", 
+            fontSize: "20px", 
+            marginBottom: "10px" 
+          }}>
+            W A L L E T
+          </h1>
+
+          <div style={{ color : "#f4f4f4", cursor : "pointer"}} onClick={clearWalletData}>
+            Sign Out
+          </div>
+        </Flex>
+        
         <Flex align='center' justify='space-between'>
           <h1 style={{ 
             fontSize: "55px", 
@@ -666,8 +688,8 @@ export default function WalletPage() {
         </Flex>
 
         {activeMenu === 'home' && renderGenerateWallet()}
-        {activeMenu === 'generate' && <RenderGenerateSeedPhrase activeMenu={activeMenu} setActiveMenu={setActiveMenu}/>}
-        {activeMenu === 'import' && <RenderImportSeedPhrase activeMenu={activeMenu} setActiveMenu={setActiveMenu}/>}
+        {activeMenu === 'generate' && <RenderGenerateSeedPhrase activeMenu={activeMenu} setActiveMenu={setActiveMenu} setSeed={setSeedPhrase}/>}
+        {activeMenu === 'import' && <RenderImportSeedPhrase activeMenu={activeMenu} setActiveMenu={setActiveMenu} setSeed={setSeedPhrase}/>}
         {activeMenu === 'wallet' && renderWalletInterface()}
         <SendModal activeModal={activeModal} setActiveModal={setActiveModal}/>
         <ReceiveModal activeModal={activeModal} setActiveModal={setActiveModal} />

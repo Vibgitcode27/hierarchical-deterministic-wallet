@@ -1,13 +1,16 @@
-import { useState , useEffect , useRef } from "react";
+import { useState , useRef } from "react";
+import bip39 from 'bip39';
 
 interface RenderImportSeedPhraseProps {
     activeMenu: 'home' | 'import' | 'wallet' | 'generate';
     setActiveMenu: React.Dispatch<React.SetStateAction<'home' | 'import' | 'wallet' | 'generate'>>;
+    setSeed: React.Dispatch<string>;
 }
 
 export default function  RenderImportSeedPhrase({
     activeMenu,
     setActiveMenu,
+    setSeed,
   }: RenderImportSeedPhraseProps){
     const [seedWords, setSeedWords] = useState<string[]>(Array(12).fill(''));
     const [isValidSeed, setIsValidSeed] = useState<boolean>(true);
@@ -39,9 +42,11 @@ export default function  RenderImportSeedPhrase({
     
     // const validateSeedPhrase = (words: string[]) => {
     //   const allWordsFilled = words.every(word => word.length > 0);
+    //   console.log(allWordsFilled);
     //   const isValid = allWordsFilled && bip39.validateMnemonic(words.join(' '));
       
     //   setIsValidSeed(isValid);
+    //   console.log('isValidSeed', isValid);
     // };
     
     const handleImportSeedProceed = () => {
@@ -107,7 +112,7 @@ export default function  RenderImportSeedPhrase({
 
     <div style={{ textAlign: 'center' }}>
       <button 
-        onClick={ () => {handleImportSeedProceed() , setActiveMenu('wallet')} }
+        onClick={ () => {handleImportSeedProceed() , setActiveMenu('wallet') , setSeed(seedWords.join(' '))} }
         disabled={!isValidSeed}
         style={{
           backgroundColor: isValidSeed ? '#74ccc9' : 'gray',
