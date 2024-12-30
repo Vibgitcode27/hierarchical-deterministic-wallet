@@ -32,7 +32,6 @@ interface BlockchainOption {
 
 export default function WalletPage() {
   const [activeMenu, setActiveMenu] = useState<'home' | 'import' | 'wallet' | 'generate' | 'import'>('home');
-  const [selectedAccount, setSelectedAccount] = useState<number | null>(null);
   const [selectedNetwork , setSelectedNetwork] = useState<string>("Mainnet");
   const [isNetWorkDropdownOpen, setNetworkDropdownOpen] = useState(false);
   const [isSeedBackedUp, setSeedBackedUp] = useState(false);
@@ -77,23 +76,6 @@ export default function WalletPage() {
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
   };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   // Adding Code To generate accounts and store them in local storage
 
@@ -330,6 +312,19 @@ export default function WalletPage() {
       message.error("Error fetching Solana balance");
     }
   };
+  const [selectedBlockchain, setSelectedBlockchain] = useState<BlockchainOption>({ name: "Ethereum", logo : ethLogo.src });
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const filteredAccounts = selectedBlockchain === null 
+    ? accounts 
+    : accounts.filter((account: { blockchain: string }) => account.blockchain === selectedBlockchain.name);
+
+    const [selectedAccount, setSelectedAccount] = useState<number | null>(
+      filteredAccounts.length === 0 ? null : 0
+    );
+
+  const [activeModal, setActiveModal] = useState<'send' | 'receive' | 'swap' | null>(null);
 
   useEffect(() => {
     if(selectedAccount === null) return;
@@ -348,22 +343,6 @@ export default function WalletPage() {
     }
   }, [selectedAccount]);
 
-
-
-
-
-
-
-
-  const [selectedBlockchain, setSelectedBlockchain] = useState<BlockchainOption>({ name: "Ethereum", logo : ethLogo.src });
-  const [isDropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const filteredAccounts = selectedBlockchain === null 
-    ? accounts 
-    : accounts.filter((account: { blockchain: string }) => account.blockchain === selectedBlockchain.name);
-
-  const [activeModal, setActiveModal] = useState<'send' | 'receive' | 'swap' | null>(null);
 
   const renderGenerateWallet = () => (
     <Flex 
@@ -557,7 +536,7 @@ export default function WalletPage() {
                 </h1>
                 <Flex align="center" gap={10}>
                   <span style={{ color: '#888' }}>
-                   {`${currentAccount.address.slice(0, 15)}...${currentAccount.address.slice(-8)}`}
+                   {`${currentAccount.address.slice(0, 5)}......${currentAccount.address.slice(-6)}`}
                   </span>
                   <CopyOutlined 
                     style={{ 
@@ -716,7 +695,7 @@ export default function WalletPage() {
             W A L L E T
           </h1>
 
-          <div style={{ color : "#f4f4f4", cursor : "pointer"}} onClick={clearWalletData}>
+          <div style={{ color : "#f4f4f4", cursor : "pointer", backgroundColor : "rgba(214, 209, 209, 0.1)" , border : "2px solid rgb(57, 57, 57)" , paddingInline : "10px" , paddingBlock : "4px" , borderRadius : "20px" }} onClick={clearWalletData}>
             Sign Out
           </div>
         </Flex>
