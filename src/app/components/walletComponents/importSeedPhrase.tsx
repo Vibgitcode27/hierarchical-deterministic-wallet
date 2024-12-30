@@ -1,5 +1,4 @@
 import { useState , useRef } from "react";
-import bip39 from 'bip39';
 
 interface RenderImportSeedPhraseProps {
     activeMenu: 'home' | 'import' | 'wallet' | 'generate';

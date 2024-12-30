@@ -1,6 +1,6 @@
 "use client";
 
-import { Flex, Avatar } from 'antd';
+import { Flex, Avatar , message } from 'antd';
 import React, { useState , useRef ,useEffect } from 'react';
 import { useAppSelector , useAppDispatch } from '@/lib/hooks';
 import RenderGenerateSeedPhrase from '@/app/components/walletComponents/generateSeed';
@@ -13,6 +13,8 @@ import solLogo from "../../assets/solana_dropdown.png";
 import xtzLogo from "../../assets/tezos_logo.png";
 import  styles from "../../styles/dropdown.module.css"
 import { generateEtheriumAccount , generateSolanaAccount } from '@/app/components/helpers/helperFunctions';
+import { ethers, formatEther, parseEther } from 'ethers';
+import * as solanaWeb3 from '@solana/web3.js';
 import {
   CopyOutlined, 
   SwapOutlined,
@@ -30,10 +32,16 @@ interface BlockchainOption {
 
 export default function WalletPage() {
   const [activeMenu, setActiveMenu] = useState<'home' | 'import' | 'wallet' | 'generate' | 'import'>('home');
-  const [selectedAccount, setSelectedAccount] = useState(0);
+  const [selectedAccount, setSelectedAccount] = useState<number | null>(null);
   const [selectedNetwork , setSelectedNetwork] = useState<string>("Mainnet");
   const [isNetWorkDropdownOpen, setNetworkDropdownOpen] = useState(false);
   const [isSeedBackedUp, setSeedBackedUp] = useState(false);
+  const [accBalance, setAccBalance] = useState<string>("0.00");
+
+  const mainnet = process.env.NEXT_PUBLIC_INFURA_URL;
+  const sepolia = process.env.NEXT_PUBLIC_SEPOLIA_INFURA_URL;
+  const solanaRpcUrl = process.env.NEXT_PUBLIC_SOLANA_RPC_URL;
+  const solanaDevRpcUrl = process.env.NEXT_PUBLIC_SOLANA_DEV_RPC_URL;
 
   const blockchains: BlockchainOption[] = [
     { name: "Ethereum", logo : ethLogo.src },
@@ -268,12 +276,77 @@ export default function WalletPage() {
     setActiveMenu('home');
   };
 
+  const fetchEthBalance = async (address: string) => {
+    try {
+      const provider = new ethers.JsonRpcProvider(mainnet)
+      const balance = await provider.getBalance(address);
+      const ethValue = formatEther(balance);
+      setAccBalance(parseFloat(ethValue).toFixed(4));
+    } catch (err) {
+      console.log(err);
+      message.error("Error fetching Ethereum balance");
+    }
+  };
 
+  const fetchSepoliaEthBalance = async (address: string) => {
+    console.log(sepolia);
+    try {
+      const provider = new ethers.JsonRpcProvider(sepolia)
+      const balance = await provider.getBalance(address);
+      const ethValue = formatEther(balance);
+      setAccBalance(parseFloat(ethValue).toFixed(4));
+    } catch (err) {
+      console.log(err);
+      message.error("Error fetching Ethereum balance");
+    }
+  };
 
+  const fetchSolBalance = async (address: string) => {
+    try {
+      const connection = new solanaWeb3.Connection(solanaRpcUrl!, 'confirmed');
+      const publicKey = new solanaWeb3.PublicKey(address);
+      console.log("Connection :- " , connection);
+      const balance = await connection.getBalance(publicKey);
+      console.log("Balance bruh :- " , balance);
+      const solValue = balance / solanaWeb3.LAMPORTS_PER_SOL;
+      setAccBalance(solValue.toFixed(4));
+    } catch (err) {
+      console.log(err);
+      message.error("Error fetching Solana balance");
+    }
+  };
 
+  const fetchSolDevnetBalance = async (address: string) => {
+    try {
+      const connection = new solanaWeb3.Connection(solanaDevRpcUrl!, 'confirmed');
+      const publicKey = new solanaWeb3.PublicKey("eVjfeZXFZfNqMJtH2SusYQFFMEmntUHJvMTTNfELmwL");
+      console.log("Connection :- " , connection);
+      const balance = await connection.getBalance(publicKey);
+      console.log("Balance bruh :- " , balance);
+      const solValue = balance / solanaWeb3.LAMPORTS_PER_SOL;
+      setAccBalance(solValue.toFixed(4));
+    } catch (err) {
+      console.log(err);
+      message.error("Error fetching Solana balance");
+    }
+  };
 
-
-
+  useEffect(() => {
+    if(selectedAccount === null) return;
+    if (selectedBlockchain.name === 'Ethereum') {
+      if (selectedNetwork === 'Mainnet') {
+        fetchEthBalance(filteredAccounts[selectedAccount].address);
+      } else {
+        fetchSepoliaEthBalance(filteredAccounts[selectedAccount].address);
+      }
+    } else if (selectedBlockchain.name === 'Solana') {
+      if (selectedNetwork === 'Mainnet') {
+        fetchSolBalance(filteredAccounts[selectedAccount].address);
+      } else {
+        fetchSolDevnetBalance(filteredAccounts[selectedAccount].address);
+      }
+    }
+  }, [selectedAccount]);
 
 
 
@@ -348,7 +421,7 @@ export default function WalletPage() {
   );
 
   const renderWalletInterface = () => {
-    const currentAccount = filteredAccounts[selectedAccount];
+    const currentAccount = selectedAccount !== null ? filteredAccounts[selectedAccount] : null;
 
     return (
       <Flex style={{ height: '100%' }}>
@@ -472,7 +545,15 @@ export default function WalletPage() {
                   margin: 0, 
                   fontSize: '40px' 
                 }}>
-                  1221.00 ETH
+                   {`${accBalance} ${
+                      selectedBlockchain.name === 'Solana'
+                        ? 'SOL'
+                        : selectedBlockchain.name === 'Ethereum'
+                        ? 'ETH'
+                        : selectedBlockchain.name === 'Tezos'
+                        ? 'XTZ'
+                        : ''
+                    }`}
                 </h1>
                 <Flex align="center" gap={10}>
                   <span style={{ color: '#888' }}>
