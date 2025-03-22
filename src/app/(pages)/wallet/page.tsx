@@ -1,6 +1,6 @@
 "use client";
 
-import { Flex, Avatar , message } from 'antd';
+import { Flex, Avatar , message , QRCode } from 'antd';
 import React, { useState , useRef ,useEffect } from 'react';
 import { useAppSelector , useAppDispatch } from '@/lib/hooks';
 import RenderGenerateSeedPhrase from '@/app/components/walletComponents/generateSeed';
@@ -25,6 +25,7 @@ import {
 } from '@ant-design/icons';
 import "../../styles/button.css";
 import { mnemonicToSeedSync } from 'bip39';
+import { current } from '@reduxjs/toolkit';
 
 interface BlockchainOption {
   name: string;
@@ -779,8 +780,8 @@ export default function WalletPage() {
         {activeMenu === 'import' && <RenderImportSeedPhrase activeMenu={activeMenu} setActiveMenu={setActiveMenu} setSeed={setSeedPhrase}/>}
         {activeMenu === 'wallet' && renderWalletInterface()}
         <SendModal activeModal={activeModal} setActiveModal={setActiveModal}/>
-        <ReceiveModal activeModal={activeModal} setActiveModal={setActiveModal} />
-        <SwapModal activeModal={activeModal} setActiveModal={setActiveModal}/>
+        <ReceiveModal activeModal={activeModal} setActiveModal={setActiveModal} blockChain={selectedBlockchain.name} publicKey={(selectedAccount !== null ? filteredAccounts[selectedAccount] : null).address} />
+        <SwapModal activeModal={activeModal}  setActiveModal={setActiveModal}/>
       </Flex>
     </div>
   );

@@ -1,27 +1,45 @@
 import { useState } from 'react';
-import { Modal, Button } from 'antd';
+import { Modal, Button , QRCode , Input } from 'antd';
+import { ethers, formatEther, parseEther } from 'ethers';
+import * as solanaWeb3 from '@solana/web3.js';
+import logo from "../../assets/profile-removebg-preview.png";
 import { CloseOutlined, CopyOutlined, QrcodeOutlined, CheckOutlined } from '@ant-design/icons';
 
 interface ReceiveModalProps {
   activeModal: 'send' | 'receive' | 'swap' | null;
   setActiveModal: React.Dispatch<React.SetStateAction<'send' | 'receive' | 'swap' | null>>;
+  blockChain: string;
+  publicKey: string;
 }
 
 export default function ReceiveModal({
   activeModal,
   setActiveModal,
+  blockChain,
+  publicKey,
 }: ReceiveModalProps) {
   const [copied, setCopied] = useState(false);
-  const address = '0x1234...5678';
+  const [amount, setAmount] = useState<string>('0');
 
   const handleClose = () => {
     setActiveModal(null);
   };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(address);
+    navigator.clipboard.writeText(publicKey);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const generateQrCodeValue = () => {
+    if (blockChain === "Ethereum") {
+      const chainId = 1; // 1 = Mainnet, use 11155111 for Sepolia, 5 for Goerli, etc.
+      return `ethereum:${publicKey}@${chainId}?value=${parseEther(amount || "0")}`;
+    } else {
+      return `solana:${publicKey}?amount=${
+        parseFloat(amount || "0") * solanaWeb3.LAMPORTS_PER_SOL
+      }`;
+    }
   };
 
   return (
@@ -60,13 +78,33 @@ export default function ReceiveModal({
       width={480}
     >
       <div className="space-y-5 text-center">
-        <div className="bg-white/10 p-4 rounded-lg border border-gray-700">
-          <p className="text-white text-lg break-words">{address}</p>
-        </div>
+        <Input
+          placeholder="Enter Amount To Receive"
+          onChange={(e) => {
+            const value = e.target.value;
+            if (/^\d*\.?\d*$/.test(value)) {
+              setAmount(value);
+            }
+          }}
+          value={amount}
+          className="w-full p-3 bg-black/20 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 placeholder-gray-500"
+          styles={{
+            input: {
+              background: 'transparent',
+              color: 'white',
+            },
+          }}
+        />
         
         <div className="flex justify-center">
           <div className="border-4 border-white/20 rounded-lg p-6 bg-white/5">
-            <QrcodeOutlined style={{ fontSize: '200px', color: 'white' }} />
+            {/* <QrcodeOutlined style={{ fontSize: '200px', color: 'white' }} /> */}
+            <QRCode 
+              style={{ color : "white" , backgroundColor : "white"}}
+              value={generateQrCodeValue()} 
+              size={250}
+              icon={logo.src} 
+            />
           </div>
         </div>
         
