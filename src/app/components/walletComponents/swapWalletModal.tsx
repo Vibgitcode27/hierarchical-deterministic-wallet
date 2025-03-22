@@ -1,178 +1,256 @@
-import { useState , useEffect , useRef } from "react";
-import {  ChevronDown , X ,  ArrowRightLeft} from 'lucide-react';
+import { useState } from 'react';
+import { Modal, Input, Button, Select, Space, Avatar } from 'antd';
+import { CloseOutlined, DownOutlined, SwapOutlined } from '@ant-design/icons';
 
 interface SwapModalProps {
-    activeModal: 'send' | 'receive' | 'swap' | null;
-    setActiveModal: React.Dispatch<React.SetStateAction<'send' | 'receive' | 'swap' | null>>;
+  activeModal: 'send' | 'receive' | 'swap' | null;
+  setActiveModal: React.Dispatch<React.SetStateAction<'send' | 'receive' | 'swap' | null>>;
+}
+
+interface Token {
+  name: string;
+  balance: string;
+  icon?: string;
 }
 
 export default function SwapModal({
-    activeModal,
-    setActiveModal,
-  }: SwapModalProps){
-    const [fromToken, setFromToken] = useState<Option | null>(null);
-    const [toToken, setToToken] = useState<Option | null>(null);
+  activeModal,
+  setActiveModal,
+}: SwapModalProps) {
+  const [fromToken, setFromToken] = useState<string | null>(null);
+  const [toToken, setToToken] = useState<string | null>(null);
+  const [fromAmount, setFromAmount] = useState<string>('');
+  const [toAmount, setToAmount] = useState<string>('');
 
-    const tokens = [
-      { name: 'ETH', balance: '0.5' },
-      { name: 'USDC', balance: '100' },
-      { name: 'SOL', balance: '0.2' }
-    ];
+  const tokens: Token[] = [
+    { name: 'ETH', balance: '0.5', icon: 'https://cryptologos.cc/logos/ethereum-eth-logo.png' },
+    { name: 'USDC', balance: '100', icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png' },
+    { name: 'SOL', balance: '0.2', icon: 'https://cryptologos.cc/logos/solana-sol-logo.png' }
+  ];
 
-    interface ModalProps {
-        isOpen: boolean;
-        onClose: () => void;
-        children: React.ReactNode;
-        title: string;
-      }
-      
-      const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title }) => {
-        if (!isOpen) return null;
-      
-        return (
-          <div 
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm"
-            onClick={onClose}
-          >
-            <div 
-              className="bg-[#1c49ff]/10 rounded-2xl p-6 w-[500px] relative"
-              onClick={(e) => e.stopPropagation()}
-              style={{ backdropFilter: 'blur(10px)' }}
-            >
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl text-white font-semibold">{title}</h2>
-                <button 
-                  onClick={onClose}
-                  style={{ all: 'unset' , color : 'white' , backgroundColor : 'rgba(186, 18, 18, 0.3)' , borderRadius : "50%" , padding : "5px" }}
-                  className="text-white hover:bg-red-500/20 rounded-full p-2"
-                >
-                  <X />
-                </button>
-              </div>
-              {children}
-            </div>
-          </div>
-        );
-      };
-
-    interface Option {
-        name: string;
-        }
-
-        interface CustomDropdownProps {
-        options: Option[];
-        selectedOption: Option | null;
-        onSelect: (option: Option) => void;
-        label: string;
-        }
-
-        const CustomDropdown: React.FC<CustomDropdownProps> = ({ 
-        options, 
-        selectedOption, 
-        onSelect, 
-        label 
-        }) => {
-        const [isOpen, setIsOpen] = useState(false);
-        const dropdownRef = useRef<HTMLDivElement>(null);
-
-        useEffect(() => {
-            const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setIsOpen(false);
-            }
-            };
-
-            document.addEventListener('mousedown', handleClickOutside);
-            return () => document.removeEventListener('mousedown', handleClickOutside);
-        }, []);
-
-        
-        return (
-            <div 
-            ref={dropdownRef} 
-            className="relative w-full"
-            style={{ zIndex: 10 }}
-            >
-            <button 
-                onClick={() => setIsOpen(!isOpen)}
-                className="w-full flex items-center justify-between bg-[#1c49ff]/10 text-white p-3 rounded-lg"
-                >
-                {selectedOption ? selectedOption.name : label}
-                <ChevronDown 
-                className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} 
-                />
-            </button>
-            {isOpen && (
-                <div 
-                className="absolute top-full mt-2 w-full bg-[#1c49ff]/20 rounded-lg shadow-lg"
-                style={{ backdropFilter: 'blur(10px)' }}
-                >
-                {options.map((option) => (
-                    <div 
-                    key={option.name}
-                    onClick={() => {
-                    onSelect(option);
-                    setIsOpen(false);
-                    }}
-                    className="p-3 hover:bg-[#1c49ff]/30 cursor-pointer text-white"
-                    >
-                    {option.name}
-                    </div>
-                ))}
-                </div>
-            )}
-            </div>
-        );
-        };
-
-    return (
-      <Modal 
-        isOpen={activeModal === 'swap'} 
-        onClose={() => setActiveModal(null)} 
-        title="Swap Tokens"
-      >
-        <div className="space-y-4">
-          <div>
-            <label className="text-white mb-2 block">From</label>
-            <CustomDropdown 
-              options={tokens}
-              selectedOption={fromToken}
-              onSelect={setFromToken}
-              label="Select Token"
-            />
-            <input 
-              type="number" 
-              placeholder="Amount" 
-              className="w-full p-3 mt-2 bg-[#1c49ff]/10 text-white rounded-lg"
-            />
-          </div>
-          
-          <div className="flex justify-center my-4">
-            <ArrowRightLeft className="text-white" />
-          </div>
-          
-          <div>
-            <label className="text-white mb-2 block">To</label>
-            <CustomDropdown 
-              options={tokens}
-              selectedOption={toToken}
-              onSelect={setToToken}
-              label="Select Token"
-            />
-            <input 
-              type="number" 
-              placeholder="Amount" 
-              className="w-full p-3 mt-2 bg-[#1c49ff]/10 text-white rounded-lg"
-              disabled
-            />
-          </div>
-          
-          <button 
-            className="w-full bg-[#1c49ff] text-white p-3 rounded-lg hover:bg-[#1c49ff]/90 transition-colors mt-4"
-          >
-            Swap
-          </button>
-        </div>
-      </Modal>
-    );
+  const handleClose = () => {
+    setActiveModal(null);
   };
+
+  const handleSwap = () => {
+    // Add your swap logic here
+    console.log({
+      fromToken,
+      toToken,
+      fromAmount,
+      toAmount
+    });
+  };
+
+  // Simulate exchange rate calculation
+  const calculateToAmount = (amount: string) => {
+    if (!amount || !fromToken || !toToken) return '';
+    
+    // Dummy exchange rates for demonstration
+    const rates = {
+      'ETH-USDC': 3000,
+      'ETH-SOL': 15,
+      'USDC-ETH': 1/3000,
+      'USDC-SOL': 1/200,
+      'SOL-ETH': 1/15,
+      'SOL-USDC': 200
+    };
+    
+    const pair = `${fromToken}-${toToken}`;
+    const rate = rates[pair as keyof typeof rates] || 1;
+    
+    return (parseFloat(amount) * rate).toFixed(6);
+  };
+
+  // Update toAmount when fromAmount, fromToken, or toToken changes
+  const handleFromAmountChange = (value: string) => {
+    setFromAmount(value);
+    setToAmount(calculateToAmount(value));
+  };
+
+  return (
+    <Modal
+      open={activeModal === 'swap'}
+      onCancel={handleClose}
+      footer={null}
+      title={<span style={{ color: "white" }}>Swap Tokens</span>}
+      centered
+      closeIcon={<CloseOutlined className="text-gray-400 hover:text-white transition-colors" />}
+      className="backdrop-blur-md"
+      styles={{
+        mask: {
+          backdropFilter: 'blur(6px)',
+          background: 'rgba(0, 0, 0, 0.6)',
+        },
+        content: {
+          background: 'rgba(0, 0, 0, 0.85)',
+          backdropFilter: 'blur(15px)',
+          borderRadius: '12px',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          color: 'white',
+        },
+        header: {
+          background: 'transparent',
+          color: 'white',
+          borderBottom: 'none',
+          paddingBottom: '0',
+          fontSize: '18px',
+          fontWeight: '600',
+        },
+        body: {
+          padding: '20px',
+        },
+      }}
+      width={480}
+    >
+      <div className="space-y-5">
+        {/* From Token Section */}
+        <div>
+          <label className="text-white mb-2 block">From</label>
+          <Select
+            placeholder={<span style={{ color: "black" }}>Select Token</span>}
+            className="w-full text-white rounded-lg border border-gray-600 bg-black/20 backdrop-blur-md"
+            onChange={(value) => {
+              setFromToken(value);
+              setToAmount(calculateToAmount(fromAmount));
+            }}
+            value={fromToken}
+            suffixIcon={<DownOutlined className="text-gray-400" />}
+            dropdownStyle={{
+              background: 'rgba(0, 0, 0, 0.9)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '8px',
+              padding: '5px',
+            }}
+            style={{
+              background: 'black !important',
+              borderColor: 'rgba(255, 255, 255, 0.2) !important',
+              borderRadius: '8px !important',
+              padding: '8px !important',
+            }}
+          >
+            {tokens.map((token) => (
+              <Select.Option
+                key={token.name}
+                value={token.name}
+                className="text-white bg-black hover:bg-gray-800 transition-colors"
+              >
+                <Space className="flex items-center">
+                  <Avatar 
+                    size={25} 
+                    icon={<img src={token.icon} alt={token.name} />}
+                    style={{ 
+                      backgroundColor: token.name === "SOL" ? "black" : "white", 
+                      display: 'flex', 
+                      border: token.name === "SOL" ? "2px solid gray" : "none",
+                      padding: token.name === "SOL" ? "4px" : "0",
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                    }}
+                  />
+                  <span style={{ color: "white" }}>{token.name}</span>
+                  <span style={{ color: "gray", fontSize: "0.8rem" }}>Balance: {token.balance}</span>
+                </Space>
+              </Select.Option>
+            ))}
+          </Select>
+          <Input
+            type="number"
+            placeholder="Amount"
+            value={fromAmount}
+            onChange={(e) => handleFromAmountChange(e.target.value)}
+            className="w-full p-3 mt-2 bg-black/20 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 placeholder-gray-500"
+            styles={{
+              input: {
+                background: 'transparent',
+                color: 'white',
+              },
+            }}
+          />
+        </div>
+        
+        {/* Swap Icon */}
+        <div className="flex justify-center my-4">
+          <div className="bg-blue-600 rounded-full p-2 cursor-pointer hover:bg-blue-500 transition-all">
+            <SwapOutlined className="text-white text-lg" />
+          </div>
+        </div>
+        
+        {/* To Token Section */}
+        <div>
+          <label className="text-white mb-2 block">To</label>
+          <Select
+            placeholder={<span style={{ color: "black" }}>Select Token</span>}
+            className="w-full text-white rounded-lg border border-gray-600 bg-black/20 backdrop-blur-md"
+            onChange={(value) => {
+              setToToken(value);
+              setToAmount(calculateToAmount(fromAmount));
+            }}
+            value={toToken}
+            suffixIcon={<DownOutlined className="text-gray-400" />}
+            dropdownStyle={{
+              background: 'rgba(0, 0, 0, 0.9)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '8px',
+              padding: '5px',
+            }}
+            style={{
+              background: 'black !important',
+              borderColor: 'rgba(255, 255, 255, 0.2) !important',
+              borderRadius: '8px !important',
+              padding: '8px !important',
+            }}
+          >
+            {tokens.map((token) => (
+              <Select.Option
+                key={token.name}
+                value={token.name}
+                className="text-white bg-black hover:bg-gray-800 transition-colors"
+              >
+                <Space className="flex items-center">
+                  <Avatar 
+                    size={25} 
+                    icon={<img src={token.icon} alt={token.name} />}
+                    style={{ 
+                      backgroundColor: token.name === "SOL" ? "black" : "white", 
+                      display: 'flex', 
+                      border: token.name === "SOL" ? "2px solid gray" : "none",
+                      padding: token.name === "SOL" ? "4px" : "0",
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                    }}
+                  />
+                  <span style={{ color: "white" }}>{token.name}</span>
+                  <span style={{ color: "gray", fontSize: "0.8rem" }}>Balance: {token.balance}</span>
+                </Space>
+              </Select.Option>
+            ))}
+          </Select>
+          <Input
+            type="number"
+            placeholder="Amount"
+            value={toAmount}
+            disabled
+            className="w-full p-3 mt-2 bg-black/20 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 placeholder-gray-500"
+            styles={{
+              input: {
+                background: 'transparent',
+                color: 'white',
+              },
+            }}
+          />
+        </div>
+        
+        {/* Swap Button */}
+        <Button
+          type="primary"
+          className="w-full bg-blue-600 text-white font-medium text-lg p-4 rounded-lg hover:bg-blue-500 transition-all"
+          onClick={handleSwap}
+          disabled={!fromToken || !toToken || !fromAmount}
+        >
+          Swap
+        </Button>
+      </div>
+    </Modal>
+  );
+}

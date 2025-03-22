@@ -1,178 +1,169 @@
-import {  ChevronDown , X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Modal, Input, Button, Select , Avatar, Space } from 'antd';
+import { CloseOutlined, DownOutlined } from '@ant-design/icons';
 import ethLogo from "../../assets/ethereum-6903901_1280.png";
 import solLogo from "../../assets/solana-sol-icon.png";
-import { useState , useRef , useEffect } from 'react';
 
 interface SendModalProps {
-    activeModal: 'send' | 'receive' | 'swap' | null;
-    setActiveModal: React.Dispatch<React.SetStateAction<'send' | 'receive' | 'swap' | null>>;
+  activeModal: 'send' | 'receive' | 'swap' | null;
+  setActiveModal: React.Dispatch<React.SetStateAction<'send' | 'receive' | 'swap' | null>>;
 }
 
+interface Blockchain {
+  name: string;
+  icon: string;
+  networks: string[];
+}
 
 export default function SendModal({
-    activeModal,
-    setActiveModal,
-  }: SendModalProps){
+  activeModal,
+  setActiveModal,
+}: SendModalProps) {
+  const [sendAmount, setSendAmount] = useState('');
+  const [receiveAddress, setReceiveAddress] = useState('');
+  const [selectedBlockchain, setSelectedBlockchain] = useState<string | null>(null);
 
-    const [sendAmount, setSendAmount] = useState('');
-    const [receiveAddress, setReceiveAddress] = useState('');
-    const [selectedBlockchain, setSelectedBlockchain] = useState<Option | null>(null);
+  const blockchains: Blockchain[] = [
+    {
+      name: 'Ethereum',
+      icon: ethLogo.src,
+      networks: ['Mainnet', 'Sepolia']
+    },
+    {
+      name: 'Solana',
+      icon: solLogo.src,
+      networks: ['Mainnet', 'Testnet']
+    }
+  ];
 
-    interface ModalProps {
-        isOpen: boolean;
-        onClose: () => void;
-        children: React.ReactNode;
-        title: string;
-      }
-      
-      const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title }) => {
-        if (!isOpen) return null;
-      
-        return (
-          <div 
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm"
-            onClick={onClose}
-          >
-            <div 
-              className="bg-[#1c49ff]/10 rounded-2xl p-6 w-[500px] relative"
-              onClick={(e) => e.stopPropagation()}
-              style={{ backdropFilter: 'blur(10px)' }}
-            >
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl text-white font-semibold">{title}</h2>
-                <button 
-                  onClick={onClose}
-                  style={{ all: 'unset' , color : 'white' , backgroundColor : 'rgba(186, 18, 18, 0.3)' , borderRadius : "50%" , padding : "5px" }}
-                  className="text-white hover:bg-red-500/20 rounded-full p-2"
-                >
-                  <X />
-                </button>
-              </div>
-              {children}
-            </div>
-          </div>
-        );
-      };
+  const handleClose = () => {
+    setActiveModal(null);
+  };
 
-    interface Option {
-        name: string;
-        }
+  const handleSend = () => {
+    // Add your send logic here
+    console.log({
+      blockchain: selectedBlockchain,
+      address: receiveAddress,
+      amount: sendAmount
+    });
+  };
 
-        interface CustomDropdownProps {
-        options: Option[];
-        selectedOption: Option | null;
-        onSelect: (option: Option) => void;
-        label: string;
-        }
-
-        const CustomDropdown: React.FC<CustomDropdownProps> = ({ 
-        options, 
-        selectedOption, 
-        onSelect, 
-        label 
-        }) => {
-        const [isOpen, setIsOpen] = useState(false);
-        const dropdownRef = useRef<HTMLDivElement>(null);
-
-        useEffect(() => {
-            const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setIsOpen(false);
-            }
-            };
-
-            document.addEventListener('mousedown', handleClickOutside);
-            return () => document.removeEventListener('mousedown', handleClickOutside);
-        }, []);
-
-        
-        return (
-            <div 
-            ref={dropdownRef} 
-            className="relative w-full"
-            style={{ zIndex: 10 }}
-            >
-            <button 
-                onClick={() => setIsOpen(!isOpen)}
-                className="w-full flex items-center justify-between bg-[#1c49ff]/10 text-white p-3 rounded-lg"
-                >
-                {selectedOption ? selectedOption.name : label}
-                <ChevronDown 
-                className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} 
-                />
-            </button>
-            {isOpen && (
-                <div 
-                className="absolute top-full mt-2 w-full bg-[#1c49ff]/20 rounded-lg shadow-lg"
-                style={{ backdropFilter: 'blur(10px)' }}
-                >
-                {options.map((option) => (
-                    <div 
-                    key={option.name}
-                    onClick={() => {
-                    onSelect(option);
-                    setIsOpen(false);
-                    }}
-                    className="p-3 hover:bg-[#1c49ff]/30 cursor-pointer text-white"
-                    >
-                    {option.name}
-                    </div>
-                ))}
-                </div>
-            )}
-            </div>
-        );
-        };
-
-        const blockchains = [
-            { 
-              name: 'Ethereum', 
-              icon: ethLogo,
-              networks: ['Mainnet', 'Sepolia']
-            },
-            { 
-              name: 'Solana', 
-              icon: solLogo,
-              networks: ['Mainnet', 'Testnet']
-            }
-          ];
-
-    return (
-        <Modal 
-            isOpen={activeModal === 'send'} 
-            onClose={() => setActiveModal(null)} 
-            title="Send Crypto"
+  return (
+    <Modal
+      open={activeModal === 'send'}
+      onCancel={handleClose}
+      footer={null}
+      title={<span style={{ color : "white"}}>Send Crypto</span>}
+      centered
+      closeIcon={<CloseOutlined className="text-gray-400 hover:text-white transition-colors" />}
+      className="backdrop-blur-md"
+      styles={{
+        mask: {
+          backdropFilter: 'blur(6px)',
+          background: 'rgba(0, 0, 0, 0.6)',
+        },
+        content: {
+          background: 'rgba(0, 0, 0, 0.85)',
+          backdropFilter: 'blur(15px)',
+          borderRadius: '12px',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          color: 'white',
+        },
+        header: {
+          background: 'transparent',
+          color: 'white',
+          borderBottom: 'none',
+          paddingBottom: '0',
+          fontSize: '18px',
+          fontWeight: '600',
+        },
+        body: {
+          padding: '20px',
+        },
+      }}
+      width={480}
+    >
+      <div className="space-y-5">
+        <Select
+          placeholder={<span style={{ color : "black"}}>Select Blockchain</span>}
+          className="w-full text-white rounded-lg border border-gray-600 bg-black/20 backdrop-blur-md"
+          onChange={(value) => setSelectedBlockchain(value)}
+          value={selectedBlockchain}
+          suffixIcon={<DownOutlined className="text-gray-400" />}
+          dropdownStyle={{
+            background: 'rgba(0, 0, 0, 0.9)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '8px',
+            padding: '5px',
+          }}
+          style={{
+            background: 'black !important',
+            borderColor: 'rgba(255, 255, 255, 0.2) !important',
+            borderRadius: '8px !important',
+            padding: '8px !important',
+          }}
         >
-            <div className="space-y-4">
-            <CustomDropdown 
-                options={blockchains}
-                selectedOption={selectedBlockchain}
-                onSelect={setSelectedBlockchain}
-                label="Select Blockchain"
-            />
-            
-            <input 
-                type="text" 
-                placeholder="Recipient Address" 
-                value={receiveAddress}
-                onChange={(e) => setReceiveAddress(e.target.value)}
-                className="w-full p-3 bg-[#1c49ff]/10 text-white rounded-lg border border-[#1c49ff]/30 focus:outline-none focus:ring-2 focus:ring-[#1c49ff]"
-            />
-            
-            <input 
-                type="number" 
-                placeholder="Amount" 
-                value={sendAmount}
-                onChange={(e) => setSendAmount(e.target.value)}
-                className="w-full p-3 bg-[#1c49ff]/10 text-white rounded-lg border border-[#1c49ff]/30 focus:outline-none focus:ring-2 focus:ring-[#1c49ff]"
-            />
-            
-            <button 
-                className="w-full bg-[#1c49ff] text-white p-3 rounded-lg hover:bg-[#1c49ff]/90 transition-colors"
+          {blockchains.map((blockchain) => (
+            <Select.Option
+              key={blockchain.name}
+              value={blockchain.name}
+              className="text-white bg-black hover:bg-gray-800 transition-colors"
             >
-                Send
-            </button>
-            </div>
-        </Modal>
-    );
+              <Space className="flex items-center">
+                { blockchain.name == "Solana" ? <Avatar size={25} icon={ <img src={blockchain.icon}/> } style={{ backgroundColor: "black", display: 'flex' , border : "2px solid gray" , padding :"4px", alignItems: 'center', justifyContent: 'center', }} /> : 
+                <Avatar 
+                  size={25} 
+                  icon={ <img src={blockchain.icon}/> }
+                  style={{ 
+                    backgroundColor: "white", 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                  }}
+                />
+                }
+                <span style={{ color : "white"}}>{blockchain.name}</span>
+              </Space>
+            </Select.Option>
+          ))}
+        </Select>
+
+        <Input
+          placeholder="Recipient Address"
+          value={receiveAddress}
+          onChange={(e) => setReceiveAddress(e.target.value)}
+          className="w-full p-3 bg-black/20 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 placeholder-gray-500"
+          styles={{
+            input: {
+              background: 'transparent',
+              color: 'white',
+            },
+          }}
+        />
+
+        <Input
+          type="number"
+          placeholder="Amount"
+          value={sendAmount}
+          onChange={(e) => setSendAmount(e.target.value)}
+          className="w-full p-3 bg-black/20 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 placeholder-gray-500"
+          styles={{
+            input: {
+              background: 'transparent',
+              color: 'white',
+            },
+          }}
+        />
+
+        <Button
+          type="primary"
+          className="w-full bg-blue-600 text-white font-medium text-lg p-4 rounded-lg hover:bg-blue-500 transition-all"
+          onClick={handleSend}
+        >
+          Send
+        </Button>
+      </div>
+    </Modal>
+  );
 }

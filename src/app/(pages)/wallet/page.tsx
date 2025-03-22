@@ -20,7 +20,8 @@ import {
   SwapOutlined,
   SendOutlined,
   QrcodeOutlined,
-  ArrowDownOutlined
+  ArrowDownOutlined,
+  CheckOutlined
 } from '@ant-design/icons';
 import "../../styles/button.css";
 import { mnemonicToSeedSync } from 'bip39';
@@ -35,6 +36,7 @@ export default function WalletPage() {
   const [selectedNetwork , setSelectedNetwork] = useState<string>("Mainnet");
   const [isNetWorkDropdownOpen, setNetworkDropdownOpen] = useState(false);
   const [isSeedBackedUp, setSeedBackedUp] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [accBalance, setAccBalance] = useState<string>("0.00");
 
   const mainnet = process.env.NEXT_PUBLIC_INFURA_URL;
@@ -343,6 +345,11 @@ export default function WalletPage() {
     }
   }, [selectedAccount]);
 
+  const handleCopy = (address : string) => {
+    navigator.clipboard.writeText(address);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const renderGenerateWallet = () => (
     <Flex 
@@ -425,53 +432,60 @@ export default function WalletPage() {
               My Wallets
             </h2>
           </Flex>
+          <div style={{ 
+            maxHeight: "calc(5 * 80px)", // Adjust height for 5 items (~80px per item)
+            overflowY: "auto", 
+            scrollbarWidth: "thin", // Firefox
+            scrollbarColor: "rgba(255, 255, 255, 0.2) transparent", // Firefox
+          }}>
 
-          {filteredAccounts.map((account: { id: number; name: string; address: string; balance: string; blockchain: string; network: string; privateKey: string }, index: number) => (
-            <Flex
-              key={account.id}
-              align="center"
-              justify="space-between"
-              style={{
-                backgroundColor: selectedAccount === index 
-                  ? 'rgba(255,255,255,0.1)' 
-                  : 'transparent',
-                padding: '15px',
-                borderRadius: '10px',
-                marginTop: '10px',
-                cursor: 'pointer',
-                transition: 'background-color 0.3s ease'
-              }}
-              onClick={() => setSelectedAccount(index)}
-            >
-              <Flex align="center" gap={15}>
-                <Avatar 
-                  size={50} 
-                  icon={ <img src={selectedBlockchain.logo}/> } 
-                  style={{ 
-                    backgroundColor: "#1c49ff", 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center',
-                  }} 
-                />
-                <Flex vertical>
-                  <span style={{ 
-                    color: 'white', 
-                    fontWeight: 'bold', 
-                    fontSize: "17px" 
-                  }}>
-                    {account.name}
-                  </span>
-                  <small style={{ 
-                    color: '#888', 
-                    fontSize: "16px" 
-                  }}>
-                    {`${account.address.slice(0, 8)}...${account.address.slice(-4)}`}
-                  </small>
+            {filteredAccounts.map((account: { id: number; name: string; address: string; balance: string; blockchain: string; network: string; privateKey: string }, index: number) => (
+              <Flex
+                key={account.id}
+                align="center"
+                justify="space-between"
+                style={{
+                  backgroundColor: selectedAccount === index 
+                    ? 'rgba(255,255,255,0.1)' 
+                    : 'transparent',
+                  padding: '15px',
+                  borderRadius: '10px',
+                  marginTop: '10px',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.3s ease'
+                }}
+                onClick={() => setSelectedAccount(index)}
+              >
+                <Flex align="center" gap={15}>
+                  <Avatar 
+                    size={50} 
+                    icon={ <img src={selectedBlockchain.logo}/> } 
+                    style={{ 
+                      backgroundColor: "#1c49ff", 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                    }} 
+                  />
+                  <Flex vertical>
+                    <span style={{ 
+                      color: 'white', 
+                      fontWeight: 'bold', 
+                      fontSize: "17px" 
+                    }}>
+                      {account.name}
+                    </span>
+                    <small style={{ 
+                      color: '#888', 
+                      fontSize: "16px" 
+                    }}>
+                      {`${account.address.slice(0, 8)}...${account.address.slice(-4)}`}
+                    </small>
+                  </Flex>
                 </Flex>
               </Flex>
-            </Flex>
-          ))}
+            ))}
+          </div>
           <Flex align='center' justify='center' style={{ width : "100%"}}>
             <Flex
               align="center"
@@ -538,18 +552,28 @@ export default function WalletPage() {
                   <span style={{ color: '#888' }}>
                    {`${currentAccount.address.slice(0, 5)}......${currentAccount.address.slice(-6)}`}
                   </span>
-                  <CopyOutlined 
-                    style={{ 
-                      color: 'white', 
-                      cursor: 'pointer',
-                      fontSize: '18px'
-                    }} 
-                  />
+                  { copied ? 
+                    <CheckOutlined
+                      style={{ 
+                        color: 'white', 
+                        cursor: 'pointer',
+                        fontSize: '18px'
+                      }}
+                    /> :
+                    <CopyOutlined
+                      onClick={() => handleCopy(currentAccount.address)}
+                      style={{ 
+                        color: 'white', 
+                        cursor: 'pointer',
+                        fontSize: '18px'
+                      }} 
+                    />
+                  }
                 </Flex>
               </Flex>
 
               <Flex gap={15}>
-                <button
+                <div
                   onClick={() => setActiveModal('send')}
                   style={{
                     backgroundColor: "#1c49ff",
@@ -561,12 +585,13 @@ export default function WalletPage() {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '10px',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    height : "60px"
                   }}
                 >
                   <Avatar size={40} icon={<SendOutlined style={{ height : "20px" , paddingLeft : "3px"}} />} style={{ backgroundColor : "black" , padding : "15px"}}/> Send
-                </button>
-                <button
+                </div>
+                <div
                   onClick={() => setActiveModal('swap')}
                   style={{
                     backgroundColor: "#ff4654",
@@ -578,12 +603,13 @@ export default function WalletPage() {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '10px',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    height : "60px"
                   }}
                 >
-                   <Avatar size={40} icon={<SwapOutlined style={{ height : "20px"}} />} style={{ backgroundColor : "black" , padding : "15px"}}/> Swap
-                </button>
-                <button
+                  <Avatar size={40} icon={<SwapOutlined style={{ height : "20px"}} />} style={{ backgroundColor : "black" , padding : "15px"}}/> Swap
+                </div>
+                <div
                   onClick={() => setActiveModal('receive')}
                   style={{
                     backgroundColor: "#4CAF50",
@@ -595,11 +621,12 @@ export default function WalletPage() {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '10px',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    height : "60px"
                   }}
                 >
                    <Avatar size={40} icon={<QrcodeOutlined style={{ height : "20px"}} />} style={{ backgroundColor : "black" , padding : "15px"}}/> Receive
-                </button>
+                </div>
               </Flex>
             </Flex>
 
