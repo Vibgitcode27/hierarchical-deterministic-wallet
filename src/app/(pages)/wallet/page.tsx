@@ -196,7 +196,7 @@ export default function WalletPage() {
       console.log("Seed Phrase Not Found");
       return; 
     } ;
-    
+    console.log("Seed Phrase Found" , seedPhrase);
     const seed = mnemonicToSeedSync(seedPhrase);
     const newIndex = accountCounters.Ethereum;
     const ethAccount = generateEtheriumAccount(seed, newIndex);
@@ -222,7 +222,9 @@ export default function WalletPage() {
   const addNewSolanaAccount = () => {
     if (!seedPhrase) return;
     
+    console.log("Seed Phrase Solana Found" , seedPhrase);
     const seed = mnemonicToSeedSync(seedPhrase);
+    console.log("Seed Solana :- " , seed);
     const newIndex = accountCounters.Solana;
     const solAccount = generateSolanaAccount(seed, newIndex);
     
@@ -780,7 +782,7 @@ export default function WalletPage() {
         {activeMenu === 'import' && <RenderImportSeedPhrase activeMenu={activeMenu} setActiveMenu={setActiveMenu} setSeed={setSeedPhrase}/>}
         {activeMenu === 'wallet' && renderWalletInterface()}
         <SendModal activeModal={activeModal} setActiveModal={setActiveModal}/>
-        <ReceiveModal activeModal={activeModal} setActiveModal={setActiveModal} blockChain={selectedBlockchain.name} publicKey={(selectedAccount !== null ? filteredAccounts[selectedAccount] : null).address} />
+        <ReceiveModal activeModal={activeModal} setActiveModal={setActiveModal} blockChain={selectedBlockchain.name} publicKey={(selectedAccount !== null ? filteredAccounts[selectedAccount] : null)?.address} />
         <SwapModal activeModal={activeModal}  setActiveModal={setActiveModal}/>
       </Flex>
     </div>
